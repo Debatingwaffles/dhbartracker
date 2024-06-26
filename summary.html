@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summary Page</title>
+    <style>
+        /* Add your CSS styling here */
+        #chart-container {
+            width: 200px;
+            height: 200px;
+            margin: auto;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+</head>
+<body>
+    <h1>Summary Page</h1>
+    <div id="summary-container">
+        <!-- Summary will be displayed here -->
+    </div>
+    <div id="chart-container">
+    <canvas id="categoryPieChart"></canvas>
+    <div id="chart-legend"></div>
+</div>
+    <button id="edit-button">Edit</button>
+    <button id="submit-report-button">Submit Report</button>
+
+    <script>
+        // Alcohol database
+        const alcoholDatabase = {
+            'Bud Light': { 'cat': 'Beer', 'sub_cat': 'Domestic', 'size': 1, 'Cost': 0.92,'ave_portion_size': 1 },
+            'Richmond Lager': { 'cat': 'Beer', 'sub_cat': 'Lager', 'size': 1, 'Cost':2.56 ,'ave_portion_size': 1 },
+            'Stella Artois':{ 'cat': 'Beer', 'sub_cat': 'Lager', 'size': 1, 'Cost': 2.76,'ave_portion_size': 1 },
+            'Ray Ray s Front Porch IPA':{'cat': 'Beer', 'sub_cat': 'IPA', 'size': 1, 'Cost': 2.64,'ave_portion_size': 1 },
+            'Michelob Ultra':{ 'cat': 'Beer', 'sub_cat': 'Domestic', 'size': 1, 'Cost': 0.96,'ave_portion_size': 1 },
+            'Bold Rock Cider':{ 'cat': 'Beer', 'sub_cat': 'Cidar', 'size': 1, 'Cost': 1.17,'ave_portion_size': 1 },
+            'DB Vienna Lager':{'cat': 'Beer', 'sub_cat': 'Lager', 'size': 1, 'Cost': 2.76,'ave_portion_size': 1 },
+            'Guinness': { 'cat': 'Beer', 'sub_cat': 'Stout', 'size': 1, 'Cost': 6,'ave_portion_size': 1 },
+            'Allagash':{ 'cat': 'Beer', 'sub_cat': 'Belgium', 'size': 1, 'Cost': 3,'ave_portion_size': 1 },
+            'Kona Big Wave':{'cat': 'Beer', 'sub_cat':'Lager' , 'size': 1, 'Cost': 2.52,'ave_portion_size': 1 },
+            'Modello':{'cat': 'Beer', 'sub_cat': 'Lager', 'size': 1, 'Cost': 1.15,'ave_portion_size': 1 },
+            'Basic City 6th Lord IPA': {'cat': 'Beer', 'sub_cat': 'IPA', 'size': 1, 'Cost': 1.60,'ave_portion_size': 1 },
+            'Heineken Zero':{'cat': 'Beer', 'sub_cat': 'NA Beer', 'size': 1, 'Cost': 2.69,'ave_portion_size': 1 },
+            'Budweiser':{'cat': 'Beer', 'sub_cat': 'Domestic', 'size': 1, 'Cost': 0.92,'ave_portion_size': 1 },
+            'White Claw':{'cat': 'Beer', 'sub_cat': 'Seltzer', 'size': 1, 'Cost': 1.32,'ave_portion_size': 1 },
+            'Yuengling':{'cat': 'Beer', 'sub_cat': 'Lager', 'size': 1, 'Cost': 1.85,'ave_portion_size': 1 },
+            '7LV Cabernet Sauvignon 2019 Sommelier Collection':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 13.83,'ave_portion_size': 150 },
+            '7LV Cabernet Franc 2017':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 14.08,'ave_portion_size': 150 },
+            '7LV red Blend NV':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 13.12,'ave_portion_size': 150 },
+            '7LV Pinot Noir':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 14.00,'ave_portion_size': 150 },
+            '7LV Brut Reserve':{'cat': 'Wine', 'sub_cat': 'Bubbly', 'size': 750, 'Cost': 6,'ave_portion_size': 120 },
+            '7LV Brut Rose':{'cat': 'Wine', 'sub_cat': 'Bubbly', 'size': 750, 'Cost': 6,'ave_portion_size': 120 },
+            '7LV Sauvignon Blanc':{'cat': 'Wine', 'sub_cat': 'White', 'size': 750, 'Cost': 6,'ave_portion_size': 150 },
+            '7LV Pinot Grigio':{'cat': 'Wine', 'sub_cat': 'White', 'size': 750, 'Cost': 6,'ave_portion_size': 150 },
+            '7LV Chardonnay 2017':{'cat': 'Wine', 'sub_cat': 'White', 'size': 750, 'Cost': 12.52,'ave_portion_size': 150 },
+            '7LV Still Rose':{'cat': 'Wine', 'sub_cat': 'Rose', 'size': 750, 'Cost': 13.38,'ave_portion_size': 150 },
+            '7LV red Blend 2017':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 20.42,'ave_portion_size': 150 },
+            '7LV Chardonnay 2020':{'cat': 'Wine', 'sub_cat': 'White', 'size': 750, 'Cost': 11.01,'ave_portion_size': 150 },
+            '7LV Albarino':{'cat': 'Wine', 'sub_cat': 'White', 'size': 750, 'Cost': 14.11,'ave_portion_size': 150 },
+            '7LV Petit Manseng':{'cat': 'Wine', 'sub_cat': 'red', 'size': 375, 'Cost': 12.52,'ave_portion_size': 100 },
+            '7LV Malbec':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 9.95,'ave_portion_size': 150 },
+            '7LV Voigner 2022':{'cat': 'Wine', 'sub_cat': 'White', 'size': 750, 'Cost': 10.88,'ave_portion_size': 150 },
+            '7LV Summer red 2022':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 11.14,'ave_portion_size': 150 },
+            '7LV Cab Franc South Block':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 22.52,'ave_portion_size': 150 },
+            '7LV Chardonnay 2022 WV':{'cat': 'Wine', 'sub_cat': 'White', 'size': 750, 'Cost': 11.99,'ave_portion_size': 150 },
+            '7LV Pinot Noir 2022 WV':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 14.63,'ave_portion_size': 150 },
+            '7LV Cabernet Franc 2022':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 14.80,'ave_portion_size': 150 },
+            '7LV Petit Manseng 2022':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 13.80,'ave_portion_size': 150 },
+            '7LV Chardonnay 2022 Commonwealth Crush':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 11.99,'ave_portion_size': 150 },
+            '7LV Reynolds Family Cabernet Suavignon 2019':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 64.21,'ave_portion_size': 150 },
+            '7LV Reynolds Family Cabernet Sauvignon 2019 1.5L':{'cat': 'Wine', 'sub_cat': 'red', 'size': 1500, 'Cost': 105,'ave_portion_size': 150 },
+            '7LV Cabernet Franc NAPA Valley 2019':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 59.44,'ave_portion_size': 150 },
+            '7LV Cabernet Franc NAPA Valley 2019 1.5L':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 98,'ave_portion_size': 150 },
+            '7LV Cabernet Sauvignon NAPA Valley 2017':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 60.34,'ave_portion_size': 150 },
+            '7LV Celebration Series Pinot Grigio':{'cat': 'Wine', 'sub_cat': 'White', 'size': 750, 'Cost': 6,'ave_portion_size': 150 },
+            '7LV Celebration Series Cabernet Sauvignon':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 6,'ave_portion_size': 150 },
+            '7LV Celebration Series Chardonnay':{'cat': 'Wine', 'sub_cat': 'White', 'size': 750, 'Cost': 6,'ave_portion_size': 150 },
+            '7LV Celebration Series Pinot Noir':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 6,'ave_portion_size': 150 },
+            '7LV Celebration Series Moscato':{'cat': 'Wine', 'sub_cat': 'White', 'size': 750, 'Cost': 6,'ave_portion_size': 150 },
+            'Proverb Pinot Noir':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 5.25,'ave_portion_size': 150 },
+            'Proverb Merlot':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 5.25,'ave_portion_size': 150 },
+            'Proverb Cabernet Sauvignon':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 5.25,'ave_portion_size': 150 },
+            'Proverb Rose':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 5.25,'ave_portion_size': 150 },
+            'Proverb Chardonnay':{'cat': 'Wine', 'sub_cat': 'White', 'size': 750, 'Cost': 5.25,'ave_portion_size': 150 },
+            'Proverb Pinot Grigio':{'cat': 'Wine', 'sub_cat': 'White', 'size': 750, 'Cost': 5.25,'ave_portion_size': 150 },
+            'Proverb Sauvignon Blanc':{'cat': 'Wine', 'sub_cat': 'White', 'size': 750, 'Cost': 5.25,'ave_portion_size': 150 },
+            'Chateau Souverain Merlot':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 8,'ave_portion_size': 150 },
+            'Chateau Souverain Pinot Noir':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 8,'ave_portion_size': 150 },
+            'Chateau Souverain Cabernet Sauvignon':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 7.19,'ave_portion_size': 150 },
+            'Chateau Souverain Chardonnay':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 7.19,'ave_portion_size': 150 },
+            'Chateau Souverain Pinot Grigio':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 8,'ave_portion_size': 150 },
+            'Chateau Souverain Sauvignon Blanc':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 7.19,'ave_portion_size': 150 },
+            'Chateau St. Michelle Cabernet':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 12,'ave_portion_size': 150 },
+            'Chateau St. Michelle Merlot':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 12,'ave_portion_size': 150 },
+            'Chateau St. Michelle Chardonnay':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 12,'ave_portion_size': 150 },
+            'Chateau St. Michelle, Rose':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 7.5,'ave_portion_size': 150 },
+            'Chateau St. Michelle, Sauvignon Blanc':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 12,'ave_portion_size': 150 },
+            'Chateau St. Michelle, Riesling':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 12,'ave_portion_size': 150 },
+            'Rodney Strong Cabernet Sauvignon':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 12.60,'ave_portion_size': 150 },
+            'Rodney Strong Chardonnay':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 12,'ave_portion_size': 150 },
+            'Rodney Strong Rose':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 6,'ave_portion_size': 150 },
+            'Rodney Strong Sauvignon Blanc':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 9.14,'ave_portion_size': 150 },
+            'Rodney Strong Merlot':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 11.75,'ave_portion_size': 150 },
+            'Orin Swift Machete red':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 35.05,'ave_portion_size': 150 },
+            'Orin Swift Palermo ':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 46.35,'ave_portion_size': 150 },
+            'Orin Swift Papillon':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 45.33,'ave_portion_size': 150 },
+            'Orin Swift Slander':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 43.95,'ave_portion_size': 150 },
+            'Orin Swift Abstract red':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 25.50,'ave_portion_size': 150 },
+            'Orin Swift Mannequin':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 23.31,'ave_portion_size': 150 },
+            'Orin Swift Blank Stare ':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 24.22,'ave_portion_size': 150 },
+            'Cakebread Sauvignon Blanc':{'cat': 'Wine', 'sub_cat': 'White', 'size': 750, 'Cost': 6,'ave_portion_size': 150 },
+            'Cakebread Pinot Noir':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 6,'ave_portion_size': 150 },
+            'Cakebread Cabernet Sauvignon':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 6,'ave_portion_size': 150 },
+            'Stags_ Leap Chardonnay':{'cat': 'Wine', 'sub_cat': 'White', 'size': 750, 'Cost': 36.66,'ave_portion_size': 150 },
+            'Stags_ Leap Sauvignon Blanc':{'cat': 'Wine', 'sub_cat': 'White', 'size': 750, 'Cost': 31.24,'ave_portion_size': 150 },
+            'Stags_ Leap Cabernet Sauvignon':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 71.24,'ave_portion_size': 150 },
+            'Cricova Brut':{'cat': 'Wine', 'sub_cat': 'Bubbly', 'size': 750, 'Cost': 4,'ave_portion_size': 150 },
+            'New Amsterdam 1L':{'cat': 'Liquor', 'sub_cat': 'Vodka', 'size': 1, 'Cost': 19,'ave_portion_size': 45 },
+            'New Amsterdam 1.75L':{'cat': 'Liquor', 'sub_cat': 'Vodka', 'size': 1750, 'Cost': 22,'ave_portion_size': 45 },
+            'Grey Goose 750ml':{'cat': 'Liquor', 'sub_cat': 'Vodka', 'size': 750, 'Cost': 28,'ave_portion_size': 45 },
+            'Grey Goose 1L':{'cat': 'Liquor', 'sub_cat': 'Vodka', 'size': 1000, 'Cost': 39.99,'ave_portion_size': 45 },
+            'Grey Goose 1.75L':{'cat': 'Liquor', 'sub_cat': 'Vodka', 'size': 1750, 'Cost': 49.99,'ave_portion_size': 45 },
+            'Titos Handmade':{'cat': 'Liquor', 'sub_cat': 'Vodka', 'size': 1000, 'Cost': 28,'ave_portion_size': 45 },
+            'Reyka':{'cat': 'Liquor', 'sub_cat': 'Vodka', 'size': 750, 'Cost': 27,'ave_portion_size': 45 },
+            'Absolut Elyx':{'cat': 'Liquor', 'sub_cat': 'Vodka', 'size': 1000, 'Cost': 40,'ave_portion_size': 45 },
+            'Ketel One':{'cat': 'Liquor', 'sub_cat': 'Vodka', 'size': 1000, 'Cost': 30,'ave_portion_size': 45 },
+            'Cirrus 750ml':{'cat': 'Liquor', 'sub_cat': 'Vodka', 'size': 750, 'Cost': 27,'ave_portion_size': 45 },
+            'Cirrus 1L':{'cat': 'Liquor', 'sub_cat': 'Vodka', 'size': 1000, 'Cost': 27,'ave_portion_size': 45 },
+            'Ciroc':{'cat': 'Liquor', 'sub_cat': 'Vodka', 'size': 1000, 'Cost': 47,'ave_portion_size': 45 },
+            'Tarnished Truth':{'cat': 'Liquor', 'sub_cat': 'Vodka', 'size': 750, 'Cost': 33,'ave_portion_size': 45 },
+            'Finlandia Grapefruit':{'cat': 'Liquor', 'sub_cat': 'Vodka', 'size': 750, 'Cost': 18.5,'ave_portion_size': 45 },
+            'Absolut':{'cat': 'Liquor', 'sub_cat': 'Vodka', 'size': 750, 'Cost': 20,'ave_portion_size': 45 },
+            'Smirnoff Green Apple':{'cat': 'Liquor', 'sub_cat': 'Vodka', 'size': 750, 'Cost': 14,'ave_portion_size': 45 },
+            'Smirnoff Kissed Caramel':{'cat': 'Liquor', 'sub_cat': 'Vodka', 'size': 750, 'Cost': 14,'ave_portion_size': 45 },
+            'Smirnoff Whipped Cream':{'cat': 'Liquor', 'sub_cat': 'Vodka', 'size': 750, 'Cost': 14,'ave_portion_size': 45 },
+            'Smirnoff Vanilla':{'cat': 'Liquor', 'sub_cat': 'Vodka', 'size': 750, 'Cost': 16,'ave_portion_size': 45 },
+            'Stoli':{'cat': 'Liquor', 'sub_cat': 'Vodka', 'size': 1000, 'Cost': 27,'ave_portion_size': 45 },
+            'Crystal Head':{'cat': 'Liquor', 'sub_cat': 'Vodka', 'size': 750, 'Cost': 55,'ave_portion_size': 45 },
+            'Don Q':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 750, 'Cost': 16,'ave_portion_size': 45 },
+            'Bacardi':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 1000, 'Cost': 21,'ave_portion_size': 45 },
+            'Plantation Original Dark':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 750, 'Cost': 20,'ave_portion_size': 45 },
+            'Plantation 3 Stars':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 750, 'Cost': 18,'ave_portion_size': 45 },
+            'Plantation 20th Anniversary':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 750, 'Cost': 57,'ave_portion_size': 45 },
+            'Brugal Extra Dry':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 750, 'Cost': 19,'ave_portion_size': 45 },
+            'Brugal Anejo':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 750, 'Cost': 122,'ave_portion_size': 45 },
+            'Santa Teresa 1796':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 750, 'Cost': 48,'ave_portion_size': 45 },
+            'Sailor Jerry':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 1000, 'Cost': 23,'ave_portion_size': 45 },
+            'Captain Morgans':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 1000, 'Cost': 24,'ave_portion_size': 45 },
+            'Goslings':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 750, 'Cost': 21,'ave_portion_size': 45 },
+            'Havana Club':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 750, 'Cost': 22,'ave_portion_size': 45 },
+            'Myers Dark':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 750, 'Cost': 29,'ave_portion_size': 45 },
+            'Diplomatico Reserva':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 750, 'Cost': 48,'ave_portion_size': 45 },
+            'Diplomatico Planas':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 750, 'Cost': 35,'ave_portion_size': 45 },
+            'Cruzan Pineapple':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 750, 'Cost': 14,'ave_portion_size': 45 },
+            'Cruzan Coconut':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 750, 'Cost': 14,'ave_portion_size': 45 },
+            'Cruzan Single Barrel':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 750, 'Cost': 30,'ave_portion_size': 45 },
+            'Pyrat Xo Reserve':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 750, 'Cost': 38,'ave_portion_size': 45 },
+            'Bacardi Limon':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 1000, 'Cost': 20,'ave_portion_size': 45 },
+            'Blue Chair Bay':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 750, 'Cost': 19,'ave_portion_size': 45 },
+            'Ron Zacapa Xo':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 750, 'Cost': 120,'ave_portion_size': 45 },
+            'Ron Zacapa 23':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 750, 'Cost': 47,'ave_portion_size': 45 },
+            'Kirk & Sweeney':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 750, 'Cost': 38,'ave_portion_size': 45 },
+            'Zaya':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 1000, 'Cost': 28,'ave_portion_size': 45 },
+            'Mount Gay':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 1000, 'Cost': 27,'ave_portion_size': 45 },
+            'Bacardi Select':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 750, 'Cost': 14,'ave_portion_size': 45 },
+            'Bacardi Spiced':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 750, 'Cost': 14,'ave_portion_size': 45 },
+            'Flor de Cana':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 750, 'Cost': 30,'ave_portion_size': 45 },
+            
+            'New Amsterdam 1L':{'cat': 'Liquor', 'sub_cat': 'Gin', 'size': 1000, 'Cost': 19,'ave_portion_size': 45 },
+            'Citadelle 1.75L':{'cat': 'Liquor', 'sub_cat': 'Gin', 'size': 1750, 'Cost': 42,'ave_portion_size': 45 },
+            'Bombay 1L':{'cat': 'Liquor', 'sub_cat': 'Gin', 'size': 1000, 'Cost': 30,'ave_portion_size': 45 },
+            'Tanqueray':{'cat': 'Liquor', 'sub_cat': 'Gin', 'size': 1000, 'Cost': 38,'ave_portion_size': 45 },
+            'Tanqueray No. 10':{'cat': 'Liquor', 'sub_cat': 'Gin', 'size': 750, 'Cost': 40,'ave_portion_size': 45 },
+            'Hendricks':{'cat': 'Liquor', 'sub_cat': 'Gin', 'size': 1000, 'Cost': 52,'ave_portion_size': 45 },
+            'Beefeater':{'cat': 'Liquor', 'sub_cat': 'Gin', 'size': 1000, 'Cost': 30,'ave_portion_size': 45 },
+            'Bombay Sapphire 1L':{'cat': 'Liquor', 'sub_cat': 'Gin', 'size': 1000, 'Cost': 36,'ave_portion_size': 45 },
+            'Death s Door':{'cat': 'Liquor', 'sub_cat': 'Gin', 'size': 750, 'Cost': 30,'ave_portion_size': 45 },
+            'The Botanist':{'cat': 'Liquor', 'sub_cat': 'Gin', 'size': 750, 'Cost': 40,'ave_portion_size': 45 },
+            'Mr Pickles':{'cat': 'Liquor', 'sub_cat': 'Gin', 'size': 750, 'Cost': 35,'ave_portion_size': 45 },
+            'Empress 1908':{'cat': 'Liquor', 'sub_cat': 'Gin', 'size': 750, 'Cost': 37,'ave_portion_size': 45 },
+            'Aviation':{'cat': 'Liquor', 'sub_cat': 'Gin', 'size': 750, 'Cost': 25,'ave_portion_size': 45 },
+            
+            'Tres Agave Anejo':{'cat': 'Liquor', 'sub_cat': 'Tequila', 'size': 750, 'Cost': 50,'ave_portion_size': 45 },
+            'Tres Agave Blanco':{'cat': 'Liquor', 'sub_cat': 'Tequila', 'size': 750, 'Cost': 35,'ave_portion_size': 45 },
+            'Camarena Reposado':{'cat': 'Liquor', 'sub_cat': 'Tequila', 'size': 750, 'Cost': 28,'ave_portion_size': 45 },
+            'Milagro Silver':{'cat': 'Liquor', 'sub_cat': 'Tequila', 'size': 750, 'Cost': 33,'ave_portion_size': 45 },
+            'Milagro Anejo':{'cat': 'Liquor', 'sub_cat': 'Tequila', 'size': 750, 'Cost': 45,'ave_portion_size': 45 },
+            'Milagro Select Barrel Reserve Anejo':{'cat': 'Liquor', 'sub_cat': 'red', 'size': 750, 'Cost': 63,'ave_portion_size': 45 },
+            '1800 Reposado':{'cat': 'Liquor', 'sub_cat': 'Tequila', 'size': 1000, 'Cost': 38,'ave_portion_size': 45 },
+            '1800 Silver':{'cat': 'Liquor', 'sub_cat': 'Tequila', 'size': 1000, 'Cost': 37,'ave_portion_size': 45 },
+            'Casa Noble':{'cat': 'Liquor', 'sub_cat': 'Tequila', 'size': 750, 'Cost': 43,'ave_portion_size': 45 },
+            'Patron Anejo':{'cat': 'Liquor', 'sub_cat': 'Tequila', 'size': 750, 'Cost': 6,'ave_portion_size': 45 },
+            'Patron Reposado':{'cat': 'Liquor', 'sub_cat': 'Tequila', 'size': 750, 'Cost': 55,'ave_portion_size': 45 },
+            'Patron Silver':{'cat': 'Liquor', 'sub_cat': 'Tequila', 'size': 750, 'Cost': 60,'ave_portion_size': 45 },
+            'Espolon Blanco':{'cat': 'Liquor', 'sub_cat': 'Tequila', 'size': 750, 'Cost': 30,'ave_portion_size': 45 },
+            'Casa Migos':{'cat': 'Liquor', 'sub_cat': 'Tequila', 'size': 1000, 'Cost': 69,'ave_portion_size': 45 },
+            'Cabo Wabo Reposado':{'cat': 'Liquor', 'sub_cat': 'Tequila', 'size': 750, 'Cost': 42,'ave_portion_size': 45 },
+            'Herredura Anejo':{'cat': 'Liquor', 'sub_cat': 'Tequila', 'size': 750, 'Cost': 60,'ave_portion_size': 45 },
+            'Teremana Blanco':{'cat': 'Liquor', 'sub_cat': 'Tequila', 'size': 750, 'Cost': 32,'ave_portion_size': 45 },
+            'Don Julio Reposado':{'cat': 'Liquor', 'sub_cat': 'Tequila', 'size': 750, 'Cost': 65,'ave_portion_size': 45 },
+            'Don Julio Blanco':{'cat': 'Liquor', 'sub_cat': 'Tequila', 'size': 750, 'Cost': 60,'ave_portion_size': 45 },
+            'Don Julio 1942 Anejo':{'cat': 'Liquor', 'sub_cat': 'Tequila', 'size': 750, 'Cost': 200,'ave_portion_size': 45 },
+            
+            'Evan Williams':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 1000, 'Cost': 19,'ave_portion_size': 45 },
+            'Knob Creek':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 1000, 'Cost': 50,'ave_portion_size': 45 },
+            'Jack Daniels':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 1000, 'Cost': 34,'ave_portion_size': 45 },
+            'Jim Beam':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 1000, 'Cost': 23,'ave_portion_size': 45 },
+            'Henry McKenna':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 1000, 'Cost': 16,'ave_portion_size': 45 },
+            'Makers Mark':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 1000, 'Cost': 43,'ave_portion_size': 45 },
+            'Bernheim':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 750, 'Cost': 29,'ave_portion_size': 45 },
+            'Woodford Reserve':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 1000, 'Cost': 49,'ave_portion_size': 45 },
+            'Hunter & Scott':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 750, 'Cost': 45,'ave_portion_size': 45 },
+            'Bulleit':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 750, 'Cost': 37,'ave_portion_size': 45 },
+            'Reservoir Wheat':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 750, 'Cost': 80,'ave_portion_size': 45 },
+            'Wild Turkey':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 750, 'Cost': 28,'ave_portion_size': 45 },
+            'Larceny':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 750, 'Cost': 27,'ave_portion_size': 45 },
+            'Gentleman Jack':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 1000, 'Cost': 40,'ave_portion_size': 45 },
+            'Jack Daniels Winter':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 750, 'Cost': 19,'ave_portion_size': 45 },
+            'Four Roses':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 750, 'Cost': 25,'ave_portion_size': 45 },
+            'Crown Royal 1L':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 1000, 'Cost': 39,'ave_portion_size': 45 },
+            'Old Forester 1920 Prohibition Style':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 750, 'Cost': 55,'ave_portion_size': 45 },
+            'Buffalo Trace':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 750, 'Cost': 28,'ave_portion_size': 45 },
+            'Jefferson s Reserve':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 750, 'Cost': 55,'ave_portion_size': 45 },
+            'Whistlepig Rye':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 750, 'Cost': 6,'ave_portion_size': 45 },
+            'Elijah Craig Small Batch':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 750, 'Cost': 32,'ave_portion_size': 45 },
+            'Michter s Straight Rye':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 750, 'Cost': 47,'ave_portion_size': 45 },
+            'Woodford Reserve Double Oaked':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 750, 'Cost': 60,'ave_portion_size': 45 },
+            'Maker s Mark 46':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 750, 'Cost': 42,'ave_portion_size': 45 },
+            'Knob Creek Rye':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 750, 'Cost': 40,'ave_portion_size': 45 },
+            'Russell s Reserve':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 750, 'Cost': 66,'ave_portion_size': 45 },
+            'Rabbit Hole Dareringer':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 750, 'Cost': 80,'ave_portion_size': 45 },
+            'Wild Turkey 101':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 750, 'Cost': 28,'ave_portion_size': 45 },
+            'Wild Turkey Rare Breed':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 750, 'Cost': 53,'ave_portion_size': 45 },
+            'Basil Hayden':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 750, 'Cost': 42,'ave_portion_size': 45 },
+            'Bowman s Small Batch':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 750, 'Cost': 35,'ave_portion_size': 45 },
+            
+            'Glenfiddich 12 year':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 1000, 'Cost': 65,'ave_portion_size': 45 },
+            'Glenmorangie':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 750, 'Cost': 43,'ave_portion_size': 45 },
+            'Cutty Sark':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 750, 'Cost': 17,'ave_portion_size': 45 },
+            'J & B':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 750, 'Cost': 20,'ave_portion_size': 45 },
+            'Ballantine s':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 750, 'Cost': 20,'ave_portion_size': 45 },
+            'Famous Grouse':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 1000, 'Cost': 30,'ave_portion_size': 45 },
+            'Dewars':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 1000, 'Cost': 36,'ave_portion_size': 45 },
+            'Chivas Regal':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 1000, 'Cost': 42,'ave_portion_size': 45 },
+            'Monkey Shoulder':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 750, 'Cost': 38,'ave_portion_size': 45 },
+            'Johnnie Walker red': {'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 1000, 'Cost': 37,'ave_portion_size': 45 },
+            'Johnnie Walker Black':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 1000, 'Cost': 57,'ave_portion_size': 45 },
+            'Macallan 10 year':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 750, 'Cost': 45,'ave_portion_size': 45 },
+            'Macallan 12 year':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 750, 'Cost': 75,'ave_portion_size': 45 },
+            'Macallan Double Cask':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 750, 'Cost': 84,'ave_portion_size': 45 },
+            'Jameson':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 1000, 'Cost': 42,'ave_portion_size': 45 },
+            'Kilbeggan':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 750, 'Cost': 12.59,'ave_portion_size': 45 },
+            'Dewar 12 yr':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 750, 'Cost': 30,'ave_portion_size': 45 },
+            'Laphroaig 10 yr':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 750, 'Cost': 59,'ave_portion_size': 45 },
+            'Glenlivet 12 yr':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 750, 'Cost': 57,'ave_portion_size': 45 },
+            'Balvenie 12 yr':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 750, 'Cost': 110,'ave_portion_size': 45 },
+            'Balvenie_14_yr':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 750, 'Cost': 95,'ave_portion_size': 45 },
+            'Dalmore_Cigar Malt':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 750, 'Cost': 200,'ave_portion_size': 45 },
+            'Dalmore_12_yr':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 750, 'Cost': 70,'ave_portion_size': 45 },
+            'Seagrams_VO':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 750, 'Cost': 21,'ave_portion_size': 45 },
+            'Speyburn':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 750, 'Cost': 25,'ave_portion_size': 45 },
+            'Lagavulin_16':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 750, 'Cost': 100,'ave_portion_size': 45 },
+        };
+
+        // Retrieve form data from localStorage
+        const formData = JSON.parse(localStorage.getItem('formData'));
+
+        if (formData) {
+            const summaryContainer = document.getElementById('summary-container');
+            const tableHTML = `
+                <p><strong>Event Name:</strong> ${formData.eventName}</p>
+                <p><strong>Bartender Name:</strong> ${formData.bartenderName}</p>
+                <p><strong>Event Date:</strong> ${formData.eventDate}</p>
+                <p><strong>Bar Package:</strong> ${formData.barPackage}</p>
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Starting Amount</th>
+                            <th>Added Amount</th>
+                            <th>Ending Amount</th>
+                            <th>Total Used</th>
+                            <th>Estimated Servings</th>
+                            <th>Estimated Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${formData.inventory.map(item => {
+                            const dbItem = alcoholDatabase[item.type];
+                            if (dbItem) {
+                                const totalUsed = parseFloat(item.totalUsed) || 0;
+                                const size = dbItem.size;
+                                const avePortionSize = dbItem.ave_portion_size;
+                                const cost = dbItem.Cost;
+                                const estimatedServings = Math.ceil(totalUsed * size / avePortionSize);
+                                const estimatedCost = (estimatedServings * (cost / (size / avePortionSize))).toFixed(2);
+
+                                return `
+                                    <tr>
+                                        <td>${item.type}</td>
+                                        <td>${item.startingAmount}</td>
+                                        <td>${item.addedAmount}</td>
+                                        <td>${item.endingAmount}</td>
+                                        <td>${totalUsed}</td>
+                                        <td>${estimatedServings}</td>
+                                        <td>$${estimatedCost}</td>
+                                    </tr>
+                                `;
+                            } else {
+                                return `
+                                    <tr>
+                                        <td>${item.type}</td>
+                                        <td>${item.startingAmount}</td>
+                                        <td>${item.addedAmount}</td>
+                                        <td>${item.endingAmount}</td>
+                                        <td>${item.totalUsed}</td>
+                                        <td>N/A</td>
+                                        <td>N/A</td>
+                                    </tr>
+                                `;
+                            }
+                        }).join('')}
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td colspan="5"><strong>Totals:</strong></td>
+                        <td id="total-servings"></td>
+                        <td id="total-cost"></td>
+                       </tr>
+                     </tfoot>
+</table>
+            `;
+            summaryContainer.innerHTML = tableHTML;
+
+            // Add event listener for the submit report button
+            document.getElementById('submit-report-button').addEventListener('click', function() {
+                sendEmailReport(formData, tableHTML);
+            });
+                // Update summary table with totals
+    updateSummaryTable(formData.inventory);
+        }
+
+        document.getElementById('edit-button').addEventListener('click', function() {
+            window.location.href = 'index.html'; // Change 'index.html' to the name of your first HTML file
+        });
+if (formData) {
+    // Existing code to generate summary table...
+
+    // Calculate category proportions and create pie chart
+    const { percentages, servings } = calculateCategoryProportions(formData.inventory);
+    createPieChart(percentages, servings);
+}
+        function sendEmailReport(formData, tableHTML) {
+            fetch('/api/send-report', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ formData, tableHTML }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Report sent successfully!');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to send report.');
+            });
+        }
+// Function to create the pie chart
+function createPieChart(data, servingsData) {
+    const canvas = document.getElementById('categoryPieChart');
+    const legendContainer = document.getElementById('chart-legend');
+    const ctx = canvas.getContext('2d');
+
+    const chartData = {
+        labels: ['Beer', 'Wine', 'Liquor'],
+        datasets: [{
+            label: 'Category Proportions',
+            data: data,
+            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+            hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+        }]
+    };
+
+    new Chart(ctx, {
+        type: 'pie',
+        data: chartData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Distribution of Expected Servings by Category'
+                },
+                legend: {
+                    display: false // Hide default legend
+                },
+                datalabels: {
+                    formatter: (value, context) => {
+                        const label = context.chart.data.labels[context.dataIndex];
+                        const servings = servingsData[context.dataIndex];
+                        let text = '';
+                        if (label === 'Beer') {
+                            text = `${servings} Beers Served`;
+                        } else if (label === 'Wine') {
+                            text = `${servings} Glasses of Wine`;
+                        } else if (label === 'Liquor') {
+                            text = `${servings} Pours of Liquor`;
+                        }
+                        return text;
+                    },
+                    color: '#fff',
+                    font: {
+                        weight: 'bold'
+                    }
+                }
+            }
+        },
+        plugins: [ChartDataLabels]
+    });
+
+    // Generate legend HTML
+    const legendHTML = chartData.labels.map((label, index) => {
+        const servings = servingsData[index];
+        return `<div><span style="display: inline-block; width: 20px; height: 10px; background-color: ${chartData.datasets[0].backgroundColor[index]}; margin-right: 5px;"></span>${servings} ${label}</div>`;
+    }).join('');
+
+    // Update legend container
+    legendContainer.innerHTML = legendHTML;
+}
+
+// Function to calculate category proportions
+function calculateCategoryProportions(inventory) {
+    let beerServings = 0;
+    let wineServings = 0;
+    let liquorServings = 0;
+
+    inventory.forEach(item => {
+        const dbItem = alcoholDatabase[item.type];
+        if (dbItem) {
+            const totalUsed = parseFloat(item.totalUsed) || 0;
+            const size = dbItem.size;
+            const avePortionSize = dbItem.ave_portion_size;
+            const estimatedServings = Math.ceil(totalUsed * size / avePortionSize);
+
+            if (dbItem.cat === 'Beer') {
+                beerServings += estimatedServings;
+            } else if (dbItem.cat === 'Wine') {
+                wineServings += estimatedServings;
+            } else if (dbItem.cat === 'Liquor') {
+                liquorServings += estimatedServings;
+            }
+        }
+    });
+
+    const totalServings = beerServings + wineServings + liquorServings;
+     const beerPercentage = (beerServings / totalServings) * 100;
+        const winePercentage = (wineServings / totalServings) * 100;
+        const liquorPercentage = (liquorServings / totalServings) * 100;
+        return {
+        percentages: [beerPercentage, winePercentage, liquorPercentage],
+        servings: [beerServings, wineServings, liquorServings]
+        };
+}
+
+
+// Your existing code to calculate data
+const servingsData = [beerServings, wineServings, liquorServings];
+createPieChart([beerPercentage, winePercentage, liquorPercentage], servingsData);
+
+// Update summary table with totals
+function updateSummaryTable(inventory) {
+    let totalServings = 0;
+    let totalCost = 0;
+
+    inventory.forEach(item => {
+        const dbItem = alcoholDatabase[item.type];
+        if (dbItem) {
+            const totalUsed = parseFloat(item.totalUsed) || 0;
+            const size = dbItem.size;
+            const avePortionSize = dbItem.ave_portion_size;
+            const cost = dbItem.Cost;
+            const estimatedServings = Math.ceil(totalUsed * size / avePortionSize);
+            const estimatedCost = (estimatedServings * (cost / (size / avePortionSize)));
+
+            totalServings += estimatedServings;
+            totalCost += estimatedCost;
+        }
+    });
+
+    // Update DOM with totals
+    document.getElementById('total-servings').textContent = totalServings;
+    document.getElementById('total-cost').textContent = `$${totalCost.toFixed(2)}`;
+}
+
+
+    </script>
+  </body>
+</html>
