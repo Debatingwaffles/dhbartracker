@@ -583,10 +583,22 @@ function updateSummaryTable(inventory) {
                 </table>
                 <p><strong>Category Totals:</strong></p>
                 <ul>
-                    ${totals.categoryTotals.map(total => `
-                        <li>${total.category}: Total Used: ${total.totalUsed}, Cost: $${total.totalCost.toFixed(2)}</li>
-                    `).join('')}
-                </ul>
+        ${totals.map(total => {
+            if (total.category === 'Wine') {
+                return `<li>${total.category}: Total Used: ${total.totalUsed}, Cost: $${total.totalCost.toFixed(2)}</li>`;
+            }
+        }).join('')}
+        ${totals.map(total => {
+            if (total.category === 'Liquor') {
+                return `<li>${total.category}: Total Used: ${total.totalUsed}, Cost: $${total.totalCost.toFixed(2)}</li>`;
+            }
+        }).join('')}
+        ${totals.map(total => {
+            if (total.category === 'Beer') {
+                return `<li>${total.category}: Total Used: ${total.totalUsed}, Cost: $${total.totalCost.toFixed(2)}</li>`;
+            }
+        }).join('')}
+    </ul>
             `;
         }
 
