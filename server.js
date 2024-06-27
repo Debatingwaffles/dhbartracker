@@ -1,43 +1,42 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
-const bodyParser = require('body-parser');
-require('dotenv').config(); // Load environment variables from .env file
+const dotenv = require('dotenv');
+
+// Load environment variables from .env file
+dotenv.config();
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
-app.use(bodyParser.json());
-app.use(express.static('public')); // Serve static files from the 'public' directory
+app.use(express.json());
 
-app.post('/api/send-report', async (req, res) => {
+// Endpoint to send email
+app.post('/send-email', (req, res) => {
     const { formData, tableHTML } = req.body;
 
-    // Create a Nodemailer transporter using Gmail
-    let transporter = nodemailer.createTransport({
-        service: 'gmail',
+    const transporter = nodemailer.createTransport({
+        service: 'yahoo',
         auth: {
-            user: process.env.GMAIL_USER,
-            pass: process.env.GMAIL_PASS
-        }
+            user: process.env.YAHOO_USER,
+            pass: process.env.YAHOO_PASS,
+        },
     });
 
-    // Email options
-    let mailOptions = {
-        from: process.env.GMAIL_USER,
-        to: 'recipient1@example.com, recipient2@example.com', // Add your recipients here
-        subject: `Inventory Report for ${formData.eventName}`,
-        html: tableHTML
+    const mailOptions = {
+        from: process.env.YAHOO_USER,
+        to: 'recipient@example.com', // Change to your recipient email
+        subject: `Report for ${formData.eventName}`,
+        html: tableHTML,
     };
 
-    try {
-        await transporter.sendMail(mailOptions);
-        res.json({ success: true, message: 'Report sent successfully!' });
-    } catch (error) {
-        console.error('Error sending email:', error);
-        res.status(500).json({ success: false, message: 'Failed to send report.' });
-    }
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            return res.status(500).send({ error: error.toString() });
+        }
+        res.status(200).send({ message: 'Email sent: ' + info.response });
+    });
 });
 
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+    console.log(`Server is running on port ${port}`);
 });
