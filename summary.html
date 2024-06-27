@@ -534,8 +534,14 @@ function updateSummaryTable(inventory) {
                         }).join('')}
                     </tbody>
                 </table>
-            `;
-            summaryContainer.innerHTML = tableHTML;
+            <p><strong>Servings:</strong></p>
+      <ul>
+          <li>Wine: ${wineServings}</li>
+          <li>Beer: ${beerServings}</li>
+          <li>Liquor: ${liquorServings}</li>
+      </ul>
+    `;
+    summaryContainer.innerHTML = tableHTML;
 
             // Add event listener for the submit report button
             document.getElementById('submit-report-button').addEventListener('click', function() {
