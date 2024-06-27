@@ -549,17 +549,14 @@ function updateSummaryTable(inventory) {
     }
 
     function sendEmailReport(formData, tableHTML) {
-        // Prepare email parameters
-        const templateParams = {
-            to_name: 'Recipient Name', // Replace with recipient's name
-            from_name: 'Connor', // Replace with sender's name
-            message: tableHTML, // Replace with the email message content
-            event_name: formData.eventName, // Example usage of formData in email template
-            event_date: formData.eventDate // Example usage of formData in email template
-        };
+        function sendEmailReport(formData, tableHTML) {
+    const templateParams = {
+        to_email: 'connor@doverhall.com, // Replace with the recipient's email address
+        from_name: 'Connor', // Replace with the sender's name
+        message: tableHTML // Replace with the email message content
+    };
 
-        // Send email using EmailJS
-        emailjs.send('service_5beg807', 'template_scm283b', templateParams)
+    emailjs.send('service_5beg807', 'template_scm283b', templateParams)
         .then(function(response) {
             console.log('Email sent:', response);
             alert('Report sent successfully!');
@@ -567,6 +564,7 @@ function updateSummaryTable(inventory) {
             console.error('Error sending email:', error);
             alert('Failed to send report.');
         });
+}
     }
 </script>
   </body>
