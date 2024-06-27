@@ -500,7 +500,7 @@ function updateSummaryTable(inventory) {
 
     </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@2.6.4/dist/email.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@2.6.4/dist/email.min.js"></script>
 <script type="text/javascript">
     // Initialize EmailJS with your Service ID
     emailjs.init('service_5beg807');
@@ -523,8 +523,6 @@ function updateSummaryTable(inventory) {
                         <th>Added Amount</th>
                         <th>Ending Amount</th>
                         <th>Total Used</th>
-                        <th>Estimated Servings</th>
-                        <th>Estimated Cost</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -536,8 +534,6 @@ function updateSummaryTable(inventory) {
                                 <td>${item.addedAmount}</td>
                                 <td>${item.endingAmount}</td>
                                 <td>${item.totalUsed}</td>
-                                <td>N/A</td>
-                                <td>N/A</td>
                             </tr>
                         `;
                     }).join('')}
@@ -551,20 +547,19 @@ function updateSummaryTable(inventory) {
             sendEmailReport(formData, tableHTML);
         });
     }
-function sendEmailReport(formData, tableHTML) {
-    const templateParams = {
-        eventName: formData.eventName,
-        eventDate: formData.eventDate,
-        tableHTML: tableHTML,
-        toEmail: 'connor@doverhall.com' // Replace with your recipient's email address
-    };
+
     function sendEmailReport(formData, tableHTML) {
-        // Replace 'your_service_id' with your EmailJS Service ID
-        emailjs.send('service_5beg807', 'template_scm283b', {
+        // Prepare email parameters
+        const templateParams = {
             to_name: 'Recipient Name', // Replace with recipient's name
-            from_name: 'Your Name', // Replace with sender's name
-            message_html: tableHTML // Replace with the email message content
-        })
+            from_name: 'Connor', // Replace with sender's name
+            message: tableHTML, // Replace with the email message content
+            event_name: formData.eventName, // Example usage of formData in email template
+            event_date: formData.eventDate // Example usage of formData in email template
+        };
+
+        // Send email using EmailJS
+        emailjs.send('service_5beg807', 'template_scm283b', templateParams)
         .then(function(response) {
             console.log('Email sent:', response);
             alert('Report sent successfully!');
