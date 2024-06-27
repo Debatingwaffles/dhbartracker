@@ -551,7 +551,13 @@ function updateSummaryTable(inventory) {
             sendEmailReport(formData, tableHTML);
         });
     }
-
+function sendEmailReport(formData, tableHTML) {
+    const templateParams = {
+        eventName: formData.eventName,
+        eventDate: formData.eventDate,
+        tableHTML: tableHTML,
+        toEmail: 'connor@doverhall.com' // Replace with your recipient's email address
+    };
     function sendEmailReport(formData, tableHTML) {
         // Replace 'your_service_id' with your EmailJS Service ID
         emailjs.send('service_5beg807', 'template_scm283b', {
