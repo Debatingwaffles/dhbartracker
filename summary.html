@@ -556,6 +556,7 @@ function updateSummaryTable(inventory) {
                 to_email: 'connor@doverhall.com', // Replace with the recipient's email address
                 from_name: 'Connor', // Replace with the sender's name
                 message: tableHTML // Replace with the email message content
+                isHtml: true
             };
 
             emailjs.send('service_5beg807', 'template_scm283b', templateParams)
