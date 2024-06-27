@@ -359,14 +359,6 @@ if (formData) {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ formData, tableHTML }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert('Report sent successfully!');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Failed to send report.');
             });
         }
 // Function to create the pie chart
@@ -555,7 +547,7 @@ function updateSummaryTable(inventory) {
             const templateParams = {
                 to_email: 'connor@doverhall.com', // Replace with the recipient's email address
                 from_name: 'Connor', // Replace with the sender's name
-                message: tableHTML // Replace with the email message content
+                message: tableHTML, // Replace with the email message content
                 isHtml: true
             };
 
