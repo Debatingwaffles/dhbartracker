@@ -505,45 +505,45 @@ function updateSummaryTable(inventory) {
 
         if (formData) {
             const summaryContainer = document.getElementById('summary-container');
-            const tableHTML = `
-                <p><strong>Event Name:</strong> ${formData.eventName}</p>
-                <p><strong>Bartender Name:</strong> ${formData.bartenderName}</p>
-                <p><strong>Event Date:</strong> ${formData.eventDate}</p>
-                <p><strong>Bar Package:</strong> ${formData.barPackage}</p>
-                <table border="1">
-                    <thead>
-                        <tr>
-                            <th>Type</th>
-                            <th>Starting Amount</th>
-                            <th>Added Amount</th>
-                            <th>Ending Amount</th>
-                            <th>Total Used</th>
-                            <th>Total Cost</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${formData.inventory.map(item => {
-                            return `
-                                <tr>
-                                    <td>${item.type}</td>
-                                    <td>${item.startingAmount}</td>
-                                    <td>${item.addedAmount}</td>
-                                    <td>${item.endingAmount}</td>
-                                    <td>${item.totalUsed}</td>
-                                    <td>${item.estimatedCost}</td>
-                                </tr>
-                            `;
-                        }).join('')}
-                    </tbody>
-                </table>
-            <p><strong>Servings:</strong></p>
+ const tableHTML = `
+      <p><strong>Event Name:</strong> ${formData.eventName}</p>
+      <p><strong>Bartender Name:</strong> ${formData.bartenderName}</p>
+      <p><strong>Event Date:</strong> ${formData.eventDate}</p>
+      <p><strong>Bar Package:</strong> ${formData.barPackage}</p>
+      <table border="1">
+          <thead>
+              <tr>
+                  <th>Type</th>
+                  <th>Starting Amount</th>
+                  <th>Added Amount</th>
+                  <th>Ending Amount</th>
+                  <th>Total Used</th>
+                  <th>Total Cost</th>
+              </tr>
+          </thead>
+          <tbody>
+              ${formData.inventory.map(item => `
+                  <tr>
+                      <td>${item.type}</td>
+                      <td>${item.startingAmount}</td>
+                      <td>${item.addedAmount}</td>
+                      <td>${item.endingAmount}</td>
+                      <td>${item.totalUsed}</td>
+                      <td>${(item.totalUsed * item.pricePerUnit).toFixed(2)}</td>
+                  </tr>
+              `).join('')}
+          </tbody>
+      </table>
+      <br><br>
+      <p><strong>Totals:</strong></p>
       <ul>
-          <li>Wine: ${wineServings}</li>
-          <li>Beer: ${beerServings}</li>
-          <li>Liquor: ${liquorServings}</li>
+          ${totals.map(total => `
+              <li>${total.category}: Total Used: ${total.totalUsed}, Cost: $${total.totalCost.toFixed(2)}</li>
+          `).join('')}
       </ul>
     `;
     summaryContainer.innerHTML = tableHTML;
+
 
             // Add event listener for the submit report button
             document.getElementById('submit-report-button').addEventListener('click', function() {
