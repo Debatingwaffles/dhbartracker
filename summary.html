@@ -639,6 +639,10 @@ function updateSummaryTable(inventory) {
                 .then(function(response) {
                     console.log('Email sent:', response);
                     alert('Report sent successfully!');
+
+                    // Redirect to pageend.html after sending email
+                    window.location.href = 'pageend.html';
+                    
                 }, function(error) {
                     console.error('Error sending email:', error);
                     alert('Failed to send report.');
