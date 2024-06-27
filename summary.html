@@ -502,8 +502,8 @@ function updateSummaryTable(inventory) {
 
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@2.6.4/dist/email.min.js"></script>
 <script type="text/javascript">
-    // Initialize EmailJS with your Service ID
-    emailjs.init('service_5beg807');
+    // Initialize EmailJS with your public key
+emailjs.init('t6T7rTmb7KRe_pfo2');
 
     // Retrieve form data from localStorage
     const formData = JSON.parse(localStorage.getItem('formData'));
@@ -547,6 +547,7 @@ function updateSummaryTable(inventory) {
             sendEmailReport(formData, tableHTML);
         });
     }
+    
 
     function sendEmailReport(formData, tableHTML) {
         function sendEmailReport(formData, tableHTML) {
