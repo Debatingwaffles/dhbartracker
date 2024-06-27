@@ -518,6 +518,7 @@ function updateSummaryTable(inventory) {
                             <th>Added Amount</th>
                             <th>Ending Amount</th>
                             <th>Total Used</th>
+                            <th>Total Cost</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -529,6 +530,7 @@ function updateSummaryTable(inventory) {
                                     <td>${item.addedAmount}</td>
                                     <td>${item.endingAmount}</td>
                                     <td>${item.totalUsed}</td>
+                                    <td>${item.estimatedCost}</td>
                                 </tr>
                             `;
                         }).join('')}
