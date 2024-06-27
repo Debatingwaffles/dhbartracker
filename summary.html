@@ -517,90 +517,78 @@ function updateSummaryTable(inventory) {
         }
 
         function generateTableHTML(formData) {
-            const totals = calculateTotals(formData.inventory);
+    const totals = calculateTotals(formData.inventory);
 
-            return `
-                <p><strong>Event Name:</strong> ${formData.eventName}</p>
-                <p><strong>Bartender Name:</strong> ${formData.bartenderName}</p>
-                <p><strong>Event Date:</strong> ${formData.eventDate}</p>
-                <p><strong>Bar Package:</strong> ${formData.barPackage}</p>
-                <table border="1">
-                    <thead>
-                        <tr>
-                            <th>Type</th>
-                            <th>Starting Amount</th>
-                            <th>Added Amount</th>
-                            <th>Ending Amount</th>
-                            <th>Total Used</th>
-                            <th>Estimated Servings</th>
-                            <th>Estimated Cost</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${formData.inventory.map(item => {
-                            const dbItem = alcoholDatabase[item.type];
-                            if (dbItem) {
-                                const totalUsed = parseFloat(item.totalUsed) || 0;
-                                const size = dbItem.size;
-                                const avePortionSize = dbItem.ave_portion_size;
-                                const cost = dbItem.Cost;
-                                const estimatedServings = Math.ceil(totalUsed * size / avePortionSize);
-                                const estimatedCost = (estimatedServings * (cost / (size / avePortionSize))).toFixed(2);
+    return `
+        <p><strong>Event Name:</strong> ${formData.eventName}</p>
+        <p><strong>Bartender Name:</strong> ${formData.bartenderName}</p>
+        <p><strong>Event Date:</strong> ${formData.eventDate}</p>
+        <p><strong>Bar Package:</strong> ${formData.barPackage}</p>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Starting Amount</th>
+                    <th>Added Amount</th>
+                    <th>Ending Amount</th>
+                    <th>Total Used</th>
+                    <th>Estimated Servings</th>
+                    <th>Estimated Cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${formData.inventory.map(item => {
+                    const dbItem = alcoholDatabase[item.type];
+                    if (dbItem) {
+                        const totalUsed = parseFloat(item.totalUsed) || 0;
+                        const size = dbItem.size;
+                        const avePortionSize = dbItem.ave_portion_size;
+                        const cost = dbItem.Cost;
+                        const estimatedServings = Math.ceil(totalUsed * size / avePortionSize);
+                        const estimatedCost = (estimatedServings * (cost / (size / avePortionSize))).toFixed(2);
 
-                                return `
-                                    <tr>
-                                        <td>${item.type}</td>
-                                        <td>${item.startingAmount}</td>
-                                        <td>${item.addedAmount}</td>
-                                        <td>${item.endingAmount}</td>
-                                        <td>${totalUsed}</td>
-                                        <td>${estimatedServings}</td>
-                                        <td>$${estimatedCost}</td>
-                                    </tr>
-                                `;
-                            } else {
-                                return `
-                                    <tr>
-                                        <td>${item.type}</td>
-                                        <td>${item.startingAmount}</td>
-                                        <td>${item.addedAmount}</td>
-                                        <td>${item.endingAmount}</td>
-                                        <td>${item.totalUsed}</td>
-                                        <td>N/A</td>
-                                        <td>N/A</td>
-                                    </tr>
-                                `;
-                            }
-                        }).join('')}
-                    </tbody>
-                    <tfoot>
-                      <tr>
-                        <td colspan="5"><strong>Totals:</strong></td>
-                        <td id="total-servings">${totals.totalServings}</td>
-                        <td id="total-cost">$${totals.totalCost.toFixed(2)}</td>
-                       </tr>
-                     </tfoot>
-                </table>
-                <p><strong>Category Totals:</strong></p>
-                <ul>
-        ${totals.map(total => {
-            if (total.category === 'Wine') {
-                return `<li>${total.category}: Total Used: ${total.totalUsed}, Cost: $${total.totalCost.toFixed(2)}</li>`;
-            }
-        }).join('')}
-        ${totals.map(total => {
-            if (total.category === 'Liquor') {
-                return `<li>${total.category}: Total Used: ${total.totalUsed}, Cost: $${total.totalCost.toFixed(2)}</li>`;
-            }
-        }).join('')}
-        ${totals.map(total => {
-            if (total.category === 'Beer') {
-                return `<li>${total.category}: Total Used: ${total.totalUsed}, Cost: $${total.totalCost.toFixed(2)}</li>`;
-            }
-        }).join('')}
-    </ul>
-            `;
-        }
+                        return `
+                            <tr>
+                                <td>${item.type}</td>
+                                <td>${item.startingAmount}</td>
+                                <td>${item.addedAmount}</td>
+                                <td>${item.endingAmount}</td>
+                                <td>${totalUsed}</td>
+                                <td>${estimatedServings}</td>
+                                <td>$${estimatedCost}</td>
+                            </tr>
+                        `;
+                    } else {
+                        return `
+                            <tr>
+                                <td>${item.type}</td>
+                                <td>${item.startingAmount}</td>
+                                <td>${item.addedAmount}</td>
+                                <td>${item.endingAmount}</td>
+                                <td>${item.totalUsed}</td>
+                                <td>N/A</td>
+                                <td>N/A</td>
+                            </tr>
+                        `;
+                    }
+                }).join('')}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="5"><strong>Totals:</strong></td>
+                    <td id="total-servings">${totals.totalServings}</td>
+                    <td id="total-cost">$${totals.totalCost.toFixed(2)}</td>
+                </tr>
+            </tfoot>
+        </table>
+        <p><strong>Category Totals:</strong></p>
+        <ul>
+            ${totals.categoryTotals.map(total => `
+                <li>${total.category}: Total Used: ${total.totalUsed}, Cost: $${total.totalCost.toFixed(2)}</li>
+            `).join('')}
+        </ul>
+    `;
+}
 
         function calculateTotals(inventory) {
             let totalServings = 0;
