@@ -5,7 +5,86 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bar Inventory Tracker</title>
     <style>
-        /* Add your CSS styling here */
+            <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f2f2f2;
+        }
+        .highlight {
+            font-weight: bold;
+        }
+        #inventory-matrix {
+            text-align: left;
+            margin-top: 20px;
+        }
+        #inventory-matrix label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        #inventory-matrix input[type="number"] {
+            width: 80px;
+            margin-right: 10px;
+            text-align: center;
+        }
+        #select-alcohol-container {
+            margin-top: 10px;
+        }
+        #select-alcohol-container label {
+            margin-right: 10px;
+        }
+        #select-alcohol-container select {
+            width: 200px;
+            margin-right: 10px;
+        }
+        #start-event-btn, #add-specialty-btn, #add-selected-alcohol-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #BEBAC4;
+            color: black;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        #start-event-btn:hover, #add-specialty-btn:hover, #add-selected-alcohol-btn:hover {
+            background-color: #727077;
+        }
+    </style>
+     <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #inventory-matrix div {
+            margin-bottom: 10px;
+        }
+        .remove-btn {
+            margin-left: 10px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -13,11 +92,11 @@
     <form id="inventory-form">
         <label for="event-name">Event Name:</label>
         <input type="text" id="event-name" name="event-name" required>
-        <br><br>
+        
         
         <label for="bartender-name">Bartender Name:</label>
         <input type="text" id="bartender-name" name="bartender-name" required>
-        <br><br>
+        
         
         <label for="eventDate">Event Date:</label>
         <input type="date" id="eventDate" name="eventDate" required>
@@ -39,6 +118,8 @@
         </div>
 
         <button type="button" id="add-specialty-btn">Add Specialty Alcohol</button>
+        <button type="button" id="remove-item-btn">Remove Item</button>
+        <button type="button" id="done-btn" style="display:none;">Done</button>
         <br><br>
         
         <div id="select-alcohol-container" style="display:none;">
@@ -56,8 +137,8 @@
         // Define packages with specific alcohol types
         const packages = {
             crown: ['7LV Red Blend NV', '7LV Cabernet Sauvignon 2019 Sommelier Collection', '7LV Cabernet Franc 2017', '7LV Pinot Noir', '7LV Brut Reserve', '7LV Brut Rose', '7LV Sauvignon Blanc', '7LV Pinot Grigio', '7LV Chardonnay 2017','Cricova Brut', '7LV Still Rose', '7LV Celebration Series Moscato', 'Titos Handmade',  'Ketel One', 'Bacardi', 'Plantation Original Dark', 'Tres Agave Blanco', 'Espolon Blanco', 'Aviation', 'Citadelle 1.75L','Jack Daniels', 'Bulleit', 'Dewars', 'Monkey Shoulder', 'Bud Light', 'Michelob Ultra', 'Stella Artois','Richmond Lager','DB Vienna Lager','Ray Ray s Front Porch IPA', 'Allagash','Kona Big Wave', 'Modello', 'Heineken Zero', 'Basic City 6th Lord IPA','Bold Rock Cider' ],
-            royal: ['7LV Celebration Series Pinot Grigio','7LV Celebration Series Cabernet Sauvignon','7LV Celebration Series Chardonnay','7LV Celebration Series Pinot Noir','7LV Celebration Series Moscato','New Amsterdam 1L Vodka','New Amsterdam 1L Gin','Camarena Reposado','Don Q','Jim Beam','Cutty Sark', 'Bud Light', 'Michelob Ultra', 'Stella Artois','Richmond Lager','DB Vienna Lager','Ray Ray s Front Porch IPA', 'Allagash','Kona Big Wave', 'Modello', 'Heineken Zero', 'Basic City 6th Lord IPA','Bold Rock Cider'],
-            monarch: ['7LV Celebration Series Pinot Grigio','7LV Celebration Series Cabernet Sauvignon','7LV Celebration Series Chardonnay','7LV Celebration Series Pinot Noir','7LV Celebration Series Moscato','Bud Light', 'Michelob Ultra', 'Stella Artois','Richmond Lager','DB Vienna Lager','Ray Ray s Front Porch IPA', 'Allagash','Kona Big Wave', 'Modello', 'Heineken Zero', 'Basic City 6th Lord IPA','Bold Rock Cider'],
+            royal: ['Whiskey', 'Tequila', 'Scotch'],
+            monarch: ['Wine', 'Beer', 'Champagne'],
             king: ['Vodka', 'Whiskey', 'Beer'],
             queen: ['Gin', 'Tequila', 'Champagne'],
             custom: [] // Custom package, no predefined types
@@ -152,7 +233,7 @@
             'Stags_ Leap Sauvignon Blanc':{'cat': 'Wine', 'sub_cat': 'White', 'size': 750, 'Cost': 31.24,'ave_portion_size': 150 },
             'Stags_ Leap Cabernet Sauvignon':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 71.24,'ave_portion_size': 150 },
             'Cricova Brut':{'cat': 'Wine', 'sub_cat': 'Bubbly', 'size': 750, 'Cost': 4,'ave_portion_size': 150 },
-            'New Amsterdam 1L Vodka':{'cat': 'Liquor', 'sub_cat': 'Vodka', 'size': 1000, 'Cost': 19,'ave_portion_size': 45 },
+            'New Amsterdam 1L Vodka':{'cat': 'Liquor', 'sub_cat': 'Vodka', 'size': 100, 'Cost': 19,'ave_portion_size': 45 },
             'New Amsterdam 1.75L Vodka':{'cat': 'Liquor', 'sub_cat': 'Vodka', 'size': 1750, 'Cost': 22,'ave_portion_size': 45 },
             'Grey Goose 750ml':{'cat': 'Liquor', 'sub_cat': 'Vodka', 'size': 750, 'Cost': 28,'ave_portion_size': 45 },
             'Grey Goose 1L':{'cat': 'Liquor', 'sub_cat': 'Vodka', 'size': 1000, 'Cost': 39.99,'ave_portion_size': 45 },
@@ -303,6 +384,8 @@
         const inventoryMatrix = document.getElementById('inventory-matrix');
         const selectItemDropdown = document.getElementById('select-item-dropdown');
         const addSpecialtyBtn = document.getElementById('add-specialty-btn');
+        const removeItemBtn = document.getElementById('remove-item-btn');
+        const doneBtn = document.getElementById('done-btn');
         const startEventBtn = document.getElementById('start-event-btn');
         const selectAlcoholContainer = document.getElementById('select-alcohol-container');
         const addSelectedAlcoholBtn = document.getElementById('add-selected-alcohol-btn');
@@ -310,60 +393,98 @@
         barPackageSelect.addEventListener('change', updateMatrix);
         addSpecialtyBtn.addEventListener('click', showAlcoholDropdown);
         addSelectedAlcoholBtn.addEventListener('click', addSelectedAlcohol);
+        removeItemBtn.addEventListener('click', enableRemoveMode);
+        doneBtn.addEventListener('click', disableRemoveMode);
         startEventBtn.addEventListener('click', startEvent);
 
-        function updateMatrix() {
-            const selectedPackage = barPackageSelect.value;
-            const alcoholTypes = packages[selectedPackage] || [];
+         function updateMatrix() {
+        const selectedPackage = barPackageSelect.value;
+        const alcoholTypes = packages[selectedPackage] || [];
 
-            inventoryMatrix.innerHTML = '';
+        inventoryMatrix.innerHTML = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Starting Amount</th>
+                        <th>Added Amount</th>
+                        <th>Ending Amount</th>
+                        <th>Total Used</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="inventory-tbody">
+                </tbody>
+            </table>
+        `;
 
-            // Hide add specialty button for predefined packages
-            addSpecialtyBtn.style.display = 'inline';
+        // Hide add specialty button for predefined packages
+        addSpecialtyBtn.style.display = 'inline';
 
-            alcoholTypes.forEach(type => {
-                addAlcoholRow(type);
-            });
-        }
+        const tbody = document.getElementById('inventory-tbody');
+        alcoholTypes.forEach(type => {
+            addAlcoholRow(type, tbody);
+        });
+    }
 
-        function addAlcoholRow(type) {
-            const row = document.createElement('div');
-            row.innerHTML = `
-                <label>${type}</label>
-                <input type="number" step="0.01" placeholder="Starting Amount" data-type="${type}" required>
-                <input type="number" step="0.01" placeholder="Added Amount" data-type="${type}" required>
-                <input type="number" step="0.01" placeholder="Ending Amount" data-type="${type}" required>
-                <input type="number" placeholder="Total Used" readonly data-type="${type}">
-                <br><br>
-            `;
-            inventoryMatrix.appendChild(row);
+        function addAlcoholRow(type, tbody) {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${type}</td>
+            <td><input type="number" step="0.01" placeholder="Starting Amount" data-type="${type}" required></td>
+            <td><input type="number" step="0.01" placeholder="Added Amount" data-type="${type}" required></td>
+            <td><input type="number" step="0.01" placeholder="Ending Amount" data-type="${type}" required></td>
+            <td><input type="number" placeholder="Total Used" readonly data-type="${type}"></td>
+            <td><button type="button" class="remove-btn" style="display:none;">Remove</button></td>
+        `;
+        tbody.appendChild(row);
 
-            // Add event listener for input changes to calculate total used
-            const inputs = row.querySelectorAll('input[type="number"]');
-            inputs.forEach(input => {
-                input.addEventListener('input', calculateAndUpdateTotalUsed);
-            });
-        }
+        // Add event listener for input changes to calculate total used
+        const inputs = row.querySelectorAll('input[type="number"]');
+        inputs.forEach(input => {
+            input.addEventListener('input', calculateAndUpdateTotalUsed);
+        });
+
+        // Add event listener for remove button
+        const removeBtn = row.querySelector('.remove-btn');
+        removeBtn.addEventListener('click', () => row.remove());
+    }
+        
 
         function showAlcoholDropdown() {
-            selectItemDropdown.innerHTML = ''; // Clear previous options
-            for (const item in alcoholDatabase) {
-                const option = document.createElement('option');
-                option.value = item;
-                option.textContent = item;
-                selectItemDropdown.appendChild(option);
-            }
-            selectAlcoholContainer.style.display = 'block';
+        selectItemDropdown.innerHTML = ''; // Clear previous options
+        for (const item in alcoholDatabase) {
+            const option = document.createElement('option');
+            option.value = item;
+            option.textContent = item;
+            selectItemDropdown.appendChild(option);
         }
+        selectAlcoholContainer.style.display = 'block';
+    }
 
         function addSelectedAlcohol() {
-            const selectedItem = selectItemDropdown.value;
-            if (selectedItem) {
-                addAlcoholRow(selectedItem);
-                selectAlcoholContainer.style.display = 'none'; // Hide the dropdown container
-            } else {
-                alert("Please select a valid item from the list.");
-            }
+        const selectedItem = selectItemDropdown.value;
+        if (selectedItem) {
+            const tbody = document.getElementById('inventory-tbody');
+            addAlcoholRow(selectedItem, tbody);
+            selectAlcoholContainer.style.display = 'none'; // Hide the dropdown container
+        } else {
+            alert("Please select a valid item from the list.");
+        }
+    }
+        
+        function enableRemoveMode() {
+            document.querySelectorAll('.remove-btn').forEach(button => {
+                button.style.display = 'inline';
+            });
+            doneBtn.style.display = 'inline';
+        }
+
+        function disableRemoveMode() {
+            document.querySelectorAll('.remove-btn').forEach(button => {
+                button.style.display = 'none';
+            });
+            doneBtn.style.display = 'none';
         }
 
         function startEvent() {
@@ -391,9 +512,9 @@
                 inventory: []
             };
 
-            const rows = inventoryMatrix.querySelectorAll('div');
+            const rows = inventoryMatrix.querySelectorAll('tbody tr');
             rows.forEach(row => {
-                const type = row.querySelector('label').textContent;
+                const type = row.querySelector('td').textContent;
                 const startingAmount = row.querySelector('input[placeholder="Starting Amount"]').value;
                 const addedAmount = row.querySelector('input[placeholder="Added Amount"]').value;
                 const endingAmount = row.querySelector('input[placeholder="Ending Amount"]').value;
@@ -410,19 +531,27 @@
         });
 
         function calculateAndUpdateTotalUsed() {
-            const type = this.getAttribute('data-type');
-            const inputs = this.parentElement.querySelectorAll('input[type="number"]');
-            const startingAmount = parseFloat(inputs[0].value) || 0;
-            const addedAmount = parseFloat(inputs[1].value) || 0;
-            const endingAmount = parseFloat(inputs[2].value) || 0;
+    // Ensure this refers to the current input element
+    const type = this.getAttribute('data-type');
 
-            // Calculate total used
-            const totalUsed = startingAmount + addedAmount - endingAmount;
+    // Find the row containing the current input element
+    const row = this.closest('tr');
 
-            // Update the Total Used input field
-            const totalUsedInput = this.parentElement.querySelector('input[readonly]');
-            totalUsedInput.value = totalUsed.toFixed(2); // Adjust as needed
-        }
+    // Select all number inputs within the same row
+    const inputs = row.querySelectorAll('input[type="number"]');
+
+    // Parse values from the inputs
+    const startingAmount = parseFloat(inputs[0].value) || 0;
+    const addedAmount = parseFloat(inputs[1].value) || 0;
+    const endingAmount = parseFloat(inputs[2].value) || 0;
+
+    // Calculate total used
+    const totalUsed = startingAmount + addedAmount - endingAmount;
+
+    // Update the Total Used input field
+    const totalUsedInput = inputs[3]; // Assuming the fourth input is the Total Used field
+    totalUsedInput.value = totalUsed.toFixed(2); // Adjust as needed
+}
     </script>
 </body>
 </html>
