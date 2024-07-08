@@ -294,8 +294,8 @@
                                 const size = dbItem.size;
                                 const avePortionSize = dbItem.ave_portion_size;
                                 const cost = dbItem.Cost;
-                                const estimatedServings = Math.ceil(totalUsed * size / avePortionSize);
-                                const estimatedCost = (estimatedServings * (cost / (size / avePortionSize))).toFixed(2);
+                                const estimatedServings = Math.ceil(totalUsed * (size / avePortionSize));
+                                const estimatedCost = (totalUsed * cost).toFixed(2);
 
                                 return `
                                     <tr>
@@ -477,7 +477,7 @@ function updateSummaryTable(inventory) {
             const avePortionSize = dbItem.ave_portion_size;
             const cost = dbItem.Cost;
             const estimatedServings = Math.ceil(totalUsed * size / avePortionSize);
-            const estimatedCost = (estimatedServings * (cost / (size / avePortionSize)));
+            const estimatedCost = (totalUsed * cost);
 
             totalServings += estimatedServings;
             totalCost += estimatedCost;
