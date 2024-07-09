@@ -295,7 +295,7 @@
                                 const size = dbItem.size;
                                 const avePortionSize = dbItem.ave_portion_size;
                                 const cost = dbItem.Cost;
-                                const estimatedServings = Math.ceil(totalUsed * (size / avePortionSize));
+                                const estimatedServings = Math.floor(totalUsed * (size / avePortionSize));
                                 const estimatedCost = (totalUsed * cost).toFixed(2);
 
                                 return `
@@ -438,7 +438,7 @@ function calculateCategoryProportions(inventory) {
             const totalUsed = parseFloat(item.totalUsed) || 0;
             const size = dbItem.size;
             const avePortionSize = dbItem.ave_portion_size;
-            const estimatedServings = Math.ceil(totalUsed * size / avePortionSize);
+            const estimatedServings = Math.floor(totalUsed * size / avePortionSize);
 
             if (dbItem.cat === 'Beer') {
                 beerServings += estimatedServings;
@@ -477,7 +477,7 @@ function updateSummaryTable(inventory) {
             const size = dbItem.size;
             const avePortionSize = dbItem.ave_portion_size;
             const cost = dbItem.Cost;
-            const estimatedServings = Math.ceil(totalUsed * size / avePortionSize);
+            const estimatedServings = Math.floor(totalUsed * size / avePortionSize);
             const estimatedCost = (totalUsed * cost);
 
             totalServings += estimatedServings;
@@ -545,7 +545,7 @@ function updateSummaryTable(inventory) {
                         const size = dbItem.size;
                         const avePortionSize = dbItem.ave_portion_size;
                         const cost = dbItem.Cost;
-                        const estimatedServings = Math.ceil(totalUsed * size / avePortionSize);
+                        const estimatedServings = Math.floor(totalUsed * size / avePortionSize);
                         const estimatedCost = (totalUsed * cost).toFixed(2);
 
                         return `
@@ -585,7 +585,7 @@ function updateSummaryTable(inventory) {
         <p><strong>Category Totals:</strong></p>
         <ul>
             ${totals.categoryTotals.map(total => `
-                <li>${total.category}: Total Used: ${total.totalUsed}, Cost: $${total.totalCost.toFixed(2)}</li>
+                <li>${total.category}: Estimated Servings: ${total.estimatedServings}, Cost: $${total.totalCost.toFixed(2)}</li>
             `).join('')}
         </ul>
     `;
@@ -595,9 +595,9 @@ function updateSummaryTable(inventory) {
             let totalServings = 0;
             let totalCost = 0;
             let categoryTotals = [
-                { category: 'Wine', totalUsed: 0, totalCost: 0 },
-                { category: 'Liquor', totalUsed: 0, totalCost: 0 },
-                { category: 'Beer', totalUsed: 0, totalCost: 0 }
+                { category: 'Wine', estimatedServings: 0, totalCost: 0 },
+                { category: 'Liquor', estimatedServings: 0, totalCost: 0 },
+                { category: 'Beer', estimatedServings: 0, totalCost: 0 }
             ];
 
             inventory.forEach(item => {
@@ -607,7 +607,7 @@ function updateSummaryTable(inventory) {
                     const size = dbItem.size;
                     const avePortionSize = dbItem.ave_portion_size;
                     const cost = dbItem.Cost;
-                    const estimatedServings = Math.ceil(totalUsed * size / avePortionSize);
+                    const estimatedServings = Math.floor(totalUsed * size / avePortionSize);
                     const estimatedCost = (totalUsed * cost);
 
                     totalServings += estimatedServings;
@@ -615,8 +615,8 @@ function updateSummaryTable(inventory) {
 
                     categoryTotals.forEach(categoryTotal => {
                         if (dbItem.cat === categoryTotal.category) {
-                            categoryTotal.totalUsed += totalUsed;
-                            categoryTotal.totalCost += estimatedCost;
+                            categoryTotal.estimatedServings += estimatedServings;
+                    categoryTotal.totalCost += parseFloat(estimatedCost);
                         }
                     });
                 }
@@ -661,7 +661,7 @@ function updateSummaryTable(inventory) {
                     const totalUsed = parseFloat(item.totalUsed) || 0;
                     const size = dbItem.size;
                     const avePortionSize = dbItem.ave_portion_size;
-                    const estimatedServings = Math.ceil(totalUsed * size / avePortionSize);
+                    const estimatedServings = Math.floor(totalUsed * size / avePortionSize);
 
                     if (dbItem.cat === 'Beer') {
                         beerServings += estimatedServings;
