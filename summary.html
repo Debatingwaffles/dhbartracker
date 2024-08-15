@@ -493,7 +493,37 @@ function updateSummaryTable(inventory) {
 
 
     </script>
+ <script>
+document.getElementById('addCommentButton').addEventListener('click', function() {
+    // Create a new div for the comment box and button
+    var commentDiv = document.createElement('div');
+    commentDiv.className = 'commentBox';
 
+    // Create a new text area for the comment
+    var commentInput = document.createElement('textarea');
+    commentInput.placeholder = 'Enter your comment here';
+    commentDiv.appendChild(commentInput);
+
+    // Create a submit button for the comment
+    var submitButton = document.createElement('button');
+    submitButton.textContent = 'Submit Comment';
+    submitButton.addEventListener('click', function() {
+        saveComment(commentInput.value);
+        commentDiv.remove();
+    });
+    commentDiv.appendChild(submitButton);
+
+    // Add the comment box to the comment section
+    document.getElementById('commentSection').appendChild(commentDiv);
+});
+
+// Function to save the comment to local storage
+function saveComment(comment) {
+    let comments = JSON.parse(localStorage.getItem('comments')) || [];
+    comments.push(comment);
+    localStorage.setItem('comments', JSON.stringify(comments));
+}
+    </script>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script type="text/javascript">
     // Initialize EmailJS with your public key
