@@ -535,92 +535,95 @@ function saveComment(comment) {
         // Retrieve form data from localStorage
         const formData = JSON.parse(localStorage.getItem('formData'));
 
+        // Retrieve comments from localStorage
+        const comments = JSON.parse(localStorage.getItem('comments')) || [];
+
         if (formData) {
             const summaryContainer = document.getElementById('summary-container');
             const tableHTML = generateTableHTML(formData);
             summaryContainer.innerHTML = tableHTML;
 
             document.getElementById('submit-report-button').addEventListener('click', function() {
-                sendEmailReport(formData, tableHTML);
+                sendEmailReport(formData, tableHTML, comments);
             });
 
             const { percentages, servings } = calculateCategoryProportions(formData.inventory);
             createPieChart(percentages, servings);
         }
 
-       function generateTableHTML(formData) {
-    const totals = calculateTotals(formData.inventory);
+        function generateTableHTML(formData) {
+            const totals = calculateTotals(formData.inventory);
 
-    return `
-        <p><strong>Event Name:</strong> ${formData.eventName}</p>
-        <p><strong>Bartender Name:</strong> ${formData.bartenderName}</p>
-        <p><strong>Event Date:</strong> ${formData.eventDate}</p>
-        <p><strong>Bar Package:</strong> ${formData.barPackage}</p>
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>Type</th>
-                    <th>Starting Amount</th>
-                    <th>Added Amount</th>
-                    <th>Ending Amount</th>
-                    <th>Total Used</th>
-                    <th>Estimated Servings</th>
-                    <th>Estimated Cost</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${formData.inventory.map(item => {
-                    const dbItem = alcoholDatabase[item.type];
-                    if (dbItem) {
-                        const totalUsed = parseFloat(item.totalUsed) || 0;
-                        const size = dbItem.size;
-                        const avePortionSize = dbItem.ave_portion_size;
-                        const cost = dbItem.Cost;
-                        const estimatedServings = Math.floor(totalUsed * size / avePortionSize);
-                        const estimatedCost = (totalUsed * cost).toFixed(2);
+            return `
+                <p><strong>Event Name:</strong> ${formData.eventName}</p>
+                <p><strong>Bartender Name:</strong> ${formData.bartenderName}</p>
+                <p><strong>Event Date:</strong> ${formData.eventDate}</p>
+                <p><strong>Bar Package:</strong> ${formData.barPackage}</p>
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Starting Amount</th>
+                            <th>Added Amount</th>
+                            <th>Ending Amount</th>
+                            <th>Total Used</th>
+                            <th>Estimated Servings</th>
+                            <th>Estimated Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${formData.inventory.map(item => {
+                            const dbItem = alcoholDatabase[item.type];
+                            if (dbItem) {
+                                const totalUsed = parseFloat(item.totalUsed) || 0;
+                                const size = dbItem.size;
+                                const avePortionSize = dbItem.ave_portion_size;
+                                const cost = dbItem.Cost;
+                                const estimatedServings = Math.floor(totalUsed * size / avePortionSize);
+                                const estimatedCost = (totalUsed * cost).toFixed(2);
 
-                        return `
-                            <tr>
-                                <td>${item.type}</td>
-                                <td>${item.startingAmount}</td>
-                                <td>${item.addedAmount}</td>
-                                <td>${item.endingAmount}</td>
-                                <td>${totalUsed}</td>
-                                <td>${estimatedServings}</td>
-                                <td>$${estimatedCost}</td>
-                            </tr>
-                        `;
-                    } else {
-                        return `
-                            <tr>
-                                <td>${item.type}</td>
-                                <td>${item.startingAmount}</td>
-                                <td>${item.addedAmount}</td>
-                                <td>${item.endingAmount}</td>
-                                <td>${item.totalUsed}</td>
-                                <td>N/A</td>
-                                <td>N/A</td>
-                            </tr>
-                        `;
-                    }
-                }).join('')}
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td colspan="5"><strong>Totals:</strong></td>
-                    <td id="total-servings">${totals.totalServings}</td>
-                    <td id="total-cost">$${totals.totalCost.toFixed(2)}</td>
-                </tr>
-            </tfoot>
-        </table>
-        <p><strong>Category Totals:</strong></p>
-        <ul>
-            ${totals.categoryTotals.map(total => `
-                <li>${total.category}: Estimated Servings: ${total.estimatedServings}, Cost: $${total.totalCost.toFixed(2)}</li>
-            `).join('')}
-        </ul>
-    `;
-}
+                                return `
+                                    <tr>
+                                        <td>${item.type}</td>
+                                        <td>${item.startingAmount}</td>
+                                        <td>${item.addedAmount}</td>
+                                        <td>${item.endingAmount}</td>
+                                        <td>${totalUsed}</td>
+                                        <td>${estimatedServings}</td>
+                                        <td>$${estimatedCost}</td>
+                                    </tr>
+                                `;
+                            } else {
+                                return `
+                                    <tr>
+                                        <td>${item.type}</td>
+                                        <td>${item.startingAmount}</td>
+                                        <td>${item.addedAmount}</td>
+                                        <td>${item.endingAmount}</td>
+                                        <td>${item.totalUsed}</td>
+                                        <td>N/A</td>
+                                        <td>N/A</td>
+                                    </tr>
+                                `;
+                            }
+                        }).join('')}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="5"><strong>Totals:</strong></td>
+                            <td id="total-servings">${totals.totalServings}</td>
+                            <td id="total-cost">$${totals.totalCost.toFixed(2)}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <p><strong>Category Totals:</strong></p>
+                <ul>
+                    ${totals.categoryTotals.map(total => `
+                        <li>${total.category}: Estimated Servings: ${total.estimatedServings}, Cost: $${total.totalCost.toFixed(2)}</li>
+                    `).join('')}
+                </ul>
+            `;
+        }
 
         function calculateTotals(inventory) {
             let totalServings = 0;
@@ -647,7 +650,7 @@ function saveComment(comment) {
                     categoryTotals.forEach(categoryTotal => {
                         if (dbItem.cat === categoryTotal.category) {
                             categoryTotal.estimatedServings += estimatedServings;
-                    categoryTotal.totalCost += parseFloat(estimatedCost);
+                            categoryTotal.totalCost += parseFloat(estimatedCost);
                         }
                     });
                 }
@@ -660,11 +663,12 @@ function saveComment(comment) {
             };
         }
 
-        function sendEmailReport(formData, tableHTML) {
+        function sendEmailReport(formData, tableHTML, comments) {
             const templateParams = {
                 to_email: 'connor@doverhall.com', // Replace with the recipient's email address
                 from_name: 'Connor', // Replace with the sender's name
                 message: tableHTML, // Replace with the email message content
+                comments: comments.join('\n\n') // Include the comments in the email
             };
 
             emailjs.send('service_5beg807', 'template_scm283b', templateParams)
@@ -674,7 +678,6 @@ function saveComment(comment) {
 
                     // Redirect to pageend.html after sending email
                     window.location.href = 'pageend.html';
-                    
                 }, function(error) {
                     console.error('Error sending email:', error);
                     alert('Failed to send report.');
@@ -771,8 +774,9 @@ function saveComment(comment) {
             // Generate legend HTML
             const legendHTML = chartData.labels.map((label, index) => {
                 const servings = servingsData[index];
-                return `<div><span style="display: inline-block; width: 20px; height: 10px; background-color: ${chartData.datasets[0].backgroundColor[index]}"></span> ${label}: ${servings} servings</div>`;
+                return `<div><span style="display: inline-block; width: 20px; height: 20px; background-color: ${chartData.datasets[0].backgroundColor[index]}; margin-right: 5px;"></span> ${label}: ${servings} Servings</div>`;
             }).join('');
+
             legendContainer.innerHTML = legendHTML;
         }
     })();
