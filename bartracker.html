@@ -91,7 +91,14 @@
     <form id="inventory-form">
         <label for="event-name">Event Name:</label>
         <input type="text" id="event-name" name="event-name" required>
-        
+
+        <label for="event-location">Event Location:</label>
+        <select id="event-location" name="event-location" required>
+            <option value="">select Location:</option>
+            <option value="doverhall">Dover Hall</option>
+            <option value="bartizan">Bar-Ti-Zan</option>
+        </select>
+
         <label for="bar-location">Bar Location:</label>
         <input type="text" id="bar-location" name="bar-location" required>
         
@@ -143,7 +150,7 @@
             Monarch: ['7LV Celebration Series Pinot Grigio','7LV Celebration Series Cabernet Sauvignon','7LV Celebration Series Chardonnay','7LV Celebration Series Pinot Noir','7LV Celebration Series Moscato', 'Bud Light', 'Michelob Ultra', 'Stella Artois','Richmond Lager','DB Vienna Lager','Ray Ray s Front Porch IPA', 'Allagash','Kona Big Wave', 'Modello', 'Heineken Zero', 'Basic City 6th Lord IPA','Bold Rock Cider'],
             King: ['7LV Red Blend NV', '7LV Cabernet Sauvignon 2019 Sommelier Collection', '7LV Cabernet Franc 2017', '7LV Pinot Noir', '7LV Brut Reserve', '7LV Brut Rose', '7LV Sauvignon Blanc', '7LV Pinot Grigio', '7LV Chardonnay 2017','Cricova Brut', '7LV Still Rose', '7LV Celebration Series Moscato', 'Titos Handmade',  'Ketel One', 'Bacardi', 'Plantation Original Dark', 'Tres Agave Blanco', 'Espolon Blanco', 'Aviation', 'Citadelle 1.75L','Jack Daniels', 'Bulleit', 'Dewars', 'Monkey Shoulder', 'Bud Light', 'Michelob Ultra', 'Stella Artois','Richmond Lager','DB Vienna Lager','Ray Ray s Front Porch IPA', 'Allagash','Kona Big Wave', 'Modello', 'Heineken Zero', 'Basic City 6th Lord IPA','Bold Rock Cider' ],
             Queen: ['Select Wine from List','Belvedere Vodka 1L', 'Reyka', 'Bombay Sapphire 1L', 'Hendricks', 'Makers Mark', 'Bulleit', 'Diplomatico Planas', 'Pyrat Xo Reserve', 'Cabo Wabo Reposado', 'Tres Agave Anejo','Bud Light', 'Michelob Ultra', 'Stella Artois','Richmond Lager','DB Vienna Lager','Ray Ray s Front Porch IPA', 'Allagash','Kona Big Wave', 'Modello', 'Heineken Zero', 'Basic City 6th Lord IPA','Bold Rock Cider' ],
-            Getting_Ready_Alcohol: ['7LV Brut Reserve', '7LV Brut Rose', 'Bud Light', 'Michelob Ultra', 'Stella Artois','Richmond Lager','DB Vienna Lager','Ray Ray s Front Porch IPA', 'Allagash','Kona Big Wave', 'Modello', 'Heineken Zero', 'Basic City 6th Lord IPA','Bold Rock Cider']
+            Getting_Ready_Alcohol: ['7LV Brut Reserve', '7LV Brut Rose', 'Bud Light', 'Michelob Ultra', 'Stella Artois','Richmond Lager','DB Vienna Lager','Ray Ray s Front Porch IPA', 'Allagash','Kona Big Wave', 'Modello', 'Heineken Zero', 'Basic City 6th Lord IPA','Bold Rock Cider'],
             Custom: [] // Custom package, no predefined types
         };
 
