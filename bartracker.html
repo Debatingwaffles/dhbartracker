@@ -92,15 +92,53 @@
         <label for="event-name">Event Name:</label>
         <input type="text" id="event-name" name="event-name" required>
 
-        <label for="event-location">Event Location:</label>
-        <select id="event-location" name="event-location" required>
+        <label for="eventlocation">Event Location:</label>
+        <select id="eventlocation" name="event-location" required>
             <option value="">select Location:</option>
             <option value="doverhall">Dover Hall</option>
             <option value="bartizan">Bar-Ti-Zan</option>
         </select>
 
-        <label for="bar-location">Bar Location:</label>
-        <input type="text" id="bar-location" name="bar-location" required>
+        label for="barlocation">Bar Location:</label>
+    <select id="barlocation">
+        <option value="">Select</option>
+    </select>
+
+    <script>
+        const eventlocation = document.getElementById('eventlocation');
+        const barlocation = document.getElementById('barlocation');
+
+        const options = {
+            doverhall: [
+                {value: 'pubbar', text: 'Pub Bar'},
+                {value: 'terracebar', text: 'Terrace Bar'},
+                {value: 'mobilebar', text: 'Mobile Bar'},
+                {value: 'gettingready', text: 'Getting Ready Alcohol'},
+                {value: 'otherbar', text: 'Other Bar'}
+            ],
+            bartizan: [
+                {value: 'bar1', text: 'Carrot'},
+                {value: 'bar2', text: 'Broccoli'},
+                {value: 'gettingready', text: 'Getting Ready Alcohol'},
+                {value: 'otherbar', text: 'Other Bar'}
+            ]
+        };
+
+        firstSelect.addEventListener('change', function() {
+            const selectedCategory = this.value;
+            secondSelect.innerHTML = '<option value="">Select...</option>'; // Reset second select
+
+            if (selectedCategory) {
+                options[selectedCategory].forEach(function(option) {
+                    const newOption = document.createElement('option');
+                    newOption.value = option.value;
+                    newOption.text = option.text;
+                    secondSelect.add(newOption);
+                });
+            }
+        });
+    </script>
+
         
         <label for="bartender-name">Bartender Name:</label>
         <input type="text" id="bartender-name" name="bartender-name" required>
