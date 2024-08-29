@@ -99,7 +99,7 @@
             <option value="bartizan">Bar-Ti-Zan</option>
         </select>
 
-        label for="barlocation">Bar Location:</label>
+    <label for="barlocation">Bar Location:</label>
     <select id="barlocation">
         <option value="">Select</option>
     </select>
@@ -124,9 +124,9 @@
             ]
         };
 
-        firstSelect.addEventListener('change', function() {
+        eventlocation.addEventListener('change', function() {
             const selectedCategory = this.value;
-            secondSelect.innerHTML = '<option value="">Select...</option>'; // Reset second select
+            barlocation.innerHTML = '<option value="">Select...</option>'; // Reset second select
 
             if (selectedCategory) {
                 options[selectedCategory].forEach(function(option) {
