@@ -676,7 +676,7 @@ function saveComment(comment) {
 
         function sendEmailReport(formData, tableHTML, comments) {
             const templateParams = {
-                to_email: ['connor@doverhall.com', 'ccahill099dr@gmail.com'], // Replace with the recipient's email address
+                to_email: 'connor@doverhall.com', 'ccahill099dr@gmail.com', // Replace with the recipient's email address
                 from_name: 'Connor', // Replace with the sender's name
                 message: tableHTML, // Replace with the email message content
                 comments: comments.join('\n\n') // Include the comments in the email
