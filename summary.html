@@ -675,8 +675,9 @@ function saveComment(comment) {
         }
 
         function sendEmailReport(formData, tableHTML, comments) {
+            const recipients = ['connor@doverhall.com', 'ccahill099dr@gmail.com'];
             const templateParams = {
-    to_email: 'connor@doverhall.com, ccahill099dr@gmail.com', // Make sure it's a valid format for EmailJS
+    to_email: recipients , // Make sure it's a valid format for EmailJS
     from_name: 'Connor',
     message: tableHTML,
     comments: comments.join('\n\n')
