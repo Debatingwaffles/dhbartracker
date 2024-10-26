@@ -140,11 +140,11 @@
         });
     </script>
 
-        
+
         <label for="bartender-name">Bartender Name:</label>
         <input type="text" id="bartender-name" name="bartender-name" required>
-        
-        
+
+
         <label for="eventDate">Event Date:</label>
         <input type="date" id="eventDate" name="eventDate" required>
         <br><br>
@@ -169,13 +169,13 @@
         <button type="button" id="remove-item-btn">Remove Item</button>
         <button type="button" id="done-btn" style="display:none;">Done</button>
         <br><br>
-        
+
         <div id="select-alcohol-container" style="display:none;">
             <label for="select-item-dropdown">Select Alcohol:</label>
             <select id="select-item-dropdown"></select>
             <button type="button" id="add-selected-alcohol-btn">Add Selected Alcohol</button>
         </div>
-        
+
         <br><br>
         <button type="button" id="start-event-btn">Start Event</button>
         <button id="submit-frm" type="submit">Submit</button>
@@ -184,6 +184,12 @@
     <script>
         // Define packages with specific alcohol types
         const packages = {
+            Crown: ['7LV Red Blend NV', '7LV Cabernet Sauvignon 2019 Sommelier Collection', '7LV Cabernet Franc 2017', '7LV Pinot Noir', '7LV Brut Reserve', '7LV Brut Rose', '7LV Sauvignon Blanc', '7LV Pinot Grigio', '7LV Chardonnay 2017','Cricova Brut', '7LV Still Rose', '7LV Celebration Series Moscato', 'Titos Handmade',  'Ketel One', 'Bacardi', 'Plantation Original Dark', 'Tres Agave Blanco', 'Espolon Blanco', 'Aviation', 'Mr Pickles','Jack Daniels', 'Bulleit', 'Dewars', 'Monkey Shoulder', 'Bud Light', 'Michelob Ultra', 'Stella Artois','Richmond Lager','DB Vienna Lager','Ray Ray s Front Porch IPA', 'Allagash','Kona Big Wave', 'Modello', 'Heineken Zero', 'Basic City 6th Lord IPA','Bold Rock Cider' ],
+            Royal: ['7LV Celebration Series Pinot Grigio','7LV Celebration Series Cabernet Sauvignon','7LV Celebration Series Chardonnay','7LV Celebration Series Pinot Noir','7LV Celebration Series Moscato', 'New Amsterdam 1L Vodka', 'New Amsterdam 1L Gin', 'Don Q', 'Cutty Sark', 'Camarena Reposado', 'Jim Beam',  'Bud Light', 'Michelob Ultra', 'Stella Artois','Richmond Lager','DB Vienna Lager','Ray Ray s Front Porch IPA', 'Allagash','Kona Big Wave', 'Modello', 'Heineken Zero', 'Basic City 6th Lord IPA','Bold Rock Cider'],
+            Monarch: ['7LV Celebration Series Pinot Grigio','7LV Celebration Series Cabernet Sauvignon','7LV Celebration Series Chardonnay','7LV Celebration Series Pinot Noir','7LV Celebration Series Moscato', 'Bud Light', 'Michelob Ultra', 'Stella Artois','Richmond Lager','DB Vienna Lager','Ray Ray s Front Porch IPA', 'Allagash','Kona Big Wave', 'Modello', 'Heineken Zero', 'Basic City 6th Lord IPA','Bold Rock Cider'],
+            King: ['7LV Red Blend NV', '7LV Cabernet Sauvignon 2019 Sommelier Collection', '7LV Cabernet Franc 2017', '7LV Pinot Noir', '7LV Brut Reserve', '7LV Brut Rose', '7LV Sauvignon Blanc', '7LV Pinot Grigio', '7LV Chardonnay 2017','Cricova Brut', '7LV Still Rose', '7LV Celebration Series Moscato', 'Titos Handmade',  'Ketel One', 'Bacardi', 'Plantation Original Dark', 'Tres Agave Blanco', 'Espolon Blanco', 'Aviation', 'Citadelle 1.75L','Jack Daniels', 'Bulleit', 'Dewars', 'Monkey Shoulder', 'Bud Light', 'Michelob Ultra', 'Stella Artois','Richmond Lager','DB Vienna Lager','Ray Ray s Front Porch IPA', 'Allagash','Kona Big Wave', 'Modello', 'Heineken Zero', 'Basic City 6th Lord IPA','Bold Rock Cider' ],
+            Queen: ['Select Wine from List','Belvedere Vodka 1L', 'Reyka', 'Bombay Sapphire 1L', 'Hendricks', 'Makers Mark', 'Bulleit', 'Diplomatico Planas', 'Pyrat Xo Reserve', 'Cabo Wabo Reposado', 'Tres Agave Anejo','Bud Light', 'Michelob Ultra', 'Stella Artois','Richmond Lager','DB Vienna Lager','Ray Ray s Front Porch IPA', 'Allagash','Kona Big Wave', 'Modello', 'Heineken Zero', 'Basic City 6th Lord IPA','Bold Rock Cider' ],
+            Getting_Ready_Alcohol: ['7LV Brut Reserve', '7LV Brut Rose', 'Bud Light', 'Michelob Ultra', 'Stella Artois','Richmond Lager','DB Vienna Lager','Ray Ray s Front Porch IPA', 'Allagash','Kona Big Wave', 'Modello', 'Heineken Zero', 'Basic City 6th Lord IPA','Bold Rock Cider'],
             Crown: ['7LV Red Blend NV', '7LV Cabernet Sauvignon 2019 Sommelier Collection', '7LV Cabernet Franc 2017', '7LV Pinot Noir', '7LV Brut Reserve', '7LV Brut Rose', '7LV Sauvignon Blanc', '7LV Pinot Grigio', '7LV Chardonnay 2017','Cricova Brut', '7LV Still Rose', '7LV Celebration Series Moscato', 'Titos Handmade',  'Ketel One', 'Bacardi', 'Plantation Original Dark', 'Tres Agave Blanco', 'Espolon Blanco', 'Aviation', 'Mr Pickles','Jack Daniels', 'Bulleit', 'Dewars', 'Monkey Shoulder', 'Bud Light', 'Michelob Ultra', 'Stella Artois','Richmond Lager','DB Vienna Lager', 'Allagash','Kona Big Wave', 'Modello', 'Heineken Zero', 'Basic City 6th Lord IPA','Bold Rock Cider', 'Coors Light', 'Ardnet X IPA', 'Voodoo Force', 'Miller Lite', 'High Noon Seltzer'  ],
             Royal: ['7LV Celebration Series Pinot Grigio','7LV Celebration Series Cabernet Sauvignon','7LV Celebration Series Chardonnay','7LV Celebration Series Pinot Noir','7LV Celebration Series Moscato', 'New Amsterdam 1L Vodka', 'New Amsterdam 1L Gin', 'Don Q', 'Cutty Sark', 'Camarena Reposado', 'Jim Beam',  'Bud Light', 'Michelob Ultra', 'Stella Artois','Richmond Lager','DB Vienna Lager', 'Allagash','Kona Big Wave', 'Modello', 'Heineken Zero', 'Basic City 6th Lord IPA','Bold Rock Cider', 'Coors Light', 'Ardnet X IPA', 'Voodoo Force', 'Miller Lite','High Noon Seltzer' ],
             Monarch: ['7LV Celebration Series Pinot Grigio','7LV Celebration Series Cabernet Sauvignon','7LV Celebration Series Chardonnay','7LV Celebration Series Pinot Noir','7LV Celebration Series Moscato',  'Bud Light', 'Michelob Ultra', 'Stella Artois','Richmond Lager','DB Vienna Lager', 'Allagash','Kona Big Wave', 'Modello', 'Heineken Zero', 'Basic City 6th Lord IPA','Bold Rock Cider', 'Coors Light', 'Ardnet X IPA', 'Voodoo Force', 'Miller Lite','High Noon Seltzer' ],
@@ -218,7 +224,7 @@
             'Hazy Little Thing IPA': {'cat': 'Beer', 'sub_cat': 'IPA', 'size': 1, 'Cost': 1.52, 'ave_portion_size': 1},
             'High Noon Seltzer': {'cat': 'Beer', 'sub_cat': 'Seltzer', 'size': 1, 'Cost': 2.25, 'ave_portion_size': 1},
             'Event Specific Beer': {'cat': 'Beer', 'sub_cat': 'Domestic', 'size': 1, 'Cost': 2.50, 'ave_portion_size': 1},
-            
+
             '7LV Cabernet Sauvignon 2019 Sommelier Collection':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 13.83,'ave_portion_size': 150 },
             '7LV Cabernet Franc 2017':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 14.08,'ave_portion_size': 150 },
             '7LV Red Blend NV':{'cat': 'Wine', 'sub_cat': 'red', 'size': 750, 'Cost': 13.12,'ave_portion_size': 150 },
@@ -341,7 +347,7 @@
             'Bacardi Select':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 750, 'Cost': 14,'ave_portion_size': 45 },
             'Bacardi Spiced':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 750, 'Cost': 14,'ave_portion_size': 45 },
             'Flor de Cana':{'cat': 'Liquor', 'sub_cat': 'Rum', 'size': 750, 'Cost': 30,'ave_portion_size': 45 },
-            
+
             'New Amsterdam 1L Gin':{'cat': 'Liquor', 'sub_cat': 'Gin', 'size': 1000, 'Cost': 19,'ave_portion_size': 45 },
             'Citadelle 1.75L':{'cat': 'Liquor', 'sub_cat': 'Gin', 'size': 1750, 'Cost': 42,'ave_portion_size': 45 },
             'Bombay 1L':{'cat': 'Liquor', 'sub_cat': 'Gin', 'size': 1000, 'Cost': 30,'ave_portion_size': 45 },
@@ -355,7 +361,7 @@
             'Mr Pickles':{'cat': 'Liquor', 'sub_cat': 'Gin', 'size': 750, 'Cost': 35,'ave_portion_size': 45 },
             'Empress 1908':{'cat': 'Liquor', 'sub_cat': 'Gin', 'size': 750, 'Cost': 37,'ave_portion_size': 45 },
             'Aviation':{'cat': 'Liquor', 'sub_cat': 'Gin', 'size': 750, 'Cost': 25,'ave_portion_size': 45 },
-            
+
             'Tres Agave Anejo':{'cat': 'Liquor', 'sub_cat': 'Tequila', 'size': 750, 'Cost': 50,'ave_portion_size': 45 },
             'Tres Agave Blanco':{'cat': 'Liquor', 'sub_cat': 'Tequila', 'size': 750, 'Cost': 35,'ave_portion_size': 45 },
             'Camarena Reposado':{'cat': 'Liquor', 'sub_cat': 'Tequila', 'size': 750, 'Cost': 28,'ave_portion_size': 45 },
@@ -376,7 +382,7 @@
             'Don Julio Reposado':{'cat': 'Liquor', 'sub_cat': 'Tequila', 'size': 750, 'Cost': 65,'ave_portion_size': 45 },
             'Don Julio Blanco':{'cat': 'Liquor', 'sub_cat': 'Tequila', 'size': 750, 'Cost': 60,'ave_portion_size': 45 },
             'Don Julio 1942 Anejo':{'cat': 'Liquor', 'sub_cat': 'Tequila', 'size': 750, 'Cost': 200,'ave_portion_size': 45 },
-            
+
             'Evan Williams':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 1000, 'Cost': 19,'ave_portion_size': 45 },
             'Knob Creek':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 1000, 'Cost': 50,'ave_portion_size': 45 },
             'Jack Daniels':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 1000, 'Cost': 34,'ave_portion_size': 45 },
@@ -409,7 +415,7 @@
             'Wild Turkey Rare Breed':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 750, 'Cost': 53,'ave_portion_size': 45 },
             'Basil Hayden':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 750, 'Cost': 42,'ave_portion_size': 45 },
             'Bowman s Small Batch':{'cat': 'Liquor', 'sub_cat': 'Bourbon', 'size': 750, 'Cost': 35,'ave_portion_size': 45 },
-            
+
             'Glenfiddich 12 year':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 1000, 'Cost': 65,'ave_portion_size': 45 },
             'Glenmorangie':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 750, 'Cost': 43,'ave_portion_size': 45 },
             'Cutty Sark':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 750, 'Cost': 17,'ave_portion_size': 45 },
@@ -437,7 +443,6 @@
             'Speyburn':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 750, 'Cost': 25,'ave_portion_size': 45 },
             'Lagavulin_16':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 750, 'Cost': 100,'ave_portion_size': 45 },
             'Aperol 750ml':{'cat': 'Liquor', 'sub_cat': 'Spirits', 'size': 750, 'Cost': 32,'ave_portion_size': 45 }, 
-            'Kahlua 1000ml' :{'cat': 'Liquor', 'sub_cat': "Spirits', 'size': 750, 'Cost': 39.99, 'ave_portion_size': 45 },
         };
 
         const barPackageSelect = document.getElementById('bar-package');
@@ -509,7 +514,7 @@
         const removeBtn = row.querySelector('.remove-btn');
         removeBtn.addEventListener('click', () => row.remove());
     }
-        
+
 
         function showAlcoholDropdown() {
         selectItemDropdown.innerHTML = ''; // Clear previous options
@@ -532,7 +537,7 @@
             alert("Please select a valid item from the list.");
         }
     }
-        
+
         function enableRemoveMode() {
             document.querySelectorAll('.remove-btn').forEach(button => {
                 button.style.display = 'inline';
