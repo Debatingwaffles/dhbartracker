@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Summary Page</title>
+    <title>Summary Page1</title>
     <style>
         /* Add your CSS styling here */
         #chart-container {
@@ -16,7 +16,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 </head>
 <body>
-    <h1>Summary Page</h1>
+    <h1>Summary Page1</h1>
     <div id="summary-container">
         <!-- Summary will be displayed here -->
     </div>
@@ -276,105 +276,138 @@
             'Lagavulin_16':{'cat': 'Liquor', 'sub_cat': 'Scotch', 'size': 750, 'Cost': 100,'ave_portion_size': 45 },
             'Aperol 750ml':{'cat': 'Liquor', 'sub_cat': 'Spirits', 'size': 750, 'Cost': 32,'ave_portion_size': 45 },
         };
+</script>    <!--//alcohol database -->  
+    <script>
+// Retrieve form data from localStorage
+const formData = JSON.parse(localStorage.getItem('formData'));
 
-        // Retrieve form data from localStorage
-        const formData = JSON.parse(localStorage.getItem('formData'));
-
-        if (formData) {
-            const summaryContainer = document.getElementById('summary-container');
-            const tableHTML = `
-                <p><strong>Event Name:</strong> ${formData.eventName}</p>
-                <p><strong>Event Location:</strong> ${fromData.eventLocation}</p>
-                <p><strong>Bartender Name:</strong> ${formData.bartenderName}</p>
-                <p><strong>Event Date:</strong> ${formData.eventDate}</p>
-                <p><strong>Bar Location:</stron> ${formData.barLocation}</p>
-                <p><strong>Bar Package:</strong> ${formData.barPackage}</p>
-                <table border="1">
-                    <thead>
-                        <tr>
-                            <th>Type</th>
-                            <th>Starting Amount</th>
-                            <th>Added Amount</th>
-                            <th>Ending Amount</th>
-                            <th>Total Used</th>
-                            <th>Estimated Servings</th>
-                            <th>Estimated Cost</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${formData.inventory.map(item => {
-                            const dbItem = alcoholDatabase[item.type];
-                            if (dbItem) {
-                                const totalUsed = parseFloat(item.totalUsed) || 0;
-                                const size = dbItem.size;
-                                const avePortionSize = dbItem.ave_portion_size;
-                                const cost = dbItem.Cost;
-                                const estimatedServings = Math.floor(totalUsed * (size / avePortionSize));
-                                const estimatedCost = (totalUsed * cost).toFixed(2);
-                                return `
-                                    <tr>
-                                        <td>${item.type}</td>
-                                        <td>${item.startingAmount}</td>
-                                        <td>${item.addedAmount}</td>
-                                        <td>${item.endingAmount}</td>
-                                        <td>${totalUsed}</td>
-                                        <td>${estimatedServings}</td>
-                                        <td>$${estimatedCost}</td>
-                                    </tr>
-                                `;
-                            } else {
-                                return `
-                                    <tr>
-                                        <td>${item.type}</td>
-                                        <td>${item.startingAmount}</td>
-                                        <td>${item.addedAmount}</td>
-                                        <td>${item.endingAmount}</td>
-                                        <td>${item.totalUsed}</td>
-                                        <td>N/A</td>
-                                        <td>N/A</td>
-                                    </tr>
-                                `;
-                            }
-                        }).join('')}
-                    </tbody>
-                    <tfoot>
-                      <tr>
-                        <td colspan="5"><strong>Totals:</strong></td>
-                        <td id="total-servings"></td>
-                        <td id="total-cost"></td>
-                       </tr>
-                     </tfoot>
-</table>
-            `;
-            summaryContainer.innerHTML = tableHTML;
-
-            // Add event listener for the submit report button
-            document.getElementById('submit-report-button').addEventListener('click', function() {
-                sendEmailReport(formData, tableHTML);
-            });
-                // Update summary table with totals
-    updateSummaryTable(formData.inventory);
-        }
-
-        document.getElementById('edit-button').addEventListener('click', function() {
-            window.location.href = 'index.html'; // Change 'index.html' to the name of your first HTML file
-        });
 if (formData) {
-    // Existing code to generate summary table...
+    const summaryContainer = document.getElementById('summary-container');
+    const tableHTML = `
+        <p><strong>Event Name:</strong> ${formData.eventName}</p>
+        <p><strong>Event Location:</strong> ${formData.eventLocation}</p>
+        <p><strong>Bartender Name:</strong> ${formData.bartenderName}</p>
+        <p><strong>Event Date:</strong> ${formData.eventDate}</p>
+        <p><strong>Bar Location:</strong> ${formData.barLocation}</p>
+        <p><strong>Bar Package:</strong> ${formData.barPackage}</p>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Starting Amount</th>
+                    <th>Added Amount</th>
+                    <th>Ending Amount</th>
+                    <th>Total Used</th>
+                    <th>Estimated Servings</th>
+                    <th>Estimated Cost</th>
+                    <th>Item Cat</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${formData.inventory.map(item => {
+                    const dbItem = alcoholDatabase[item.type];
+                    const itemCat = dbItem ? dbItem.cat : 'Unknown';
+                    console.log('Item:', item.type, 'Category:', itemCat);  // Debugging log
 
-    // Calculate category proportions and create pie chart
-    const { percentages, servings } = calculateCategoryProportions(formData.inventory);
-    createPieChart(percentages, servings);
+                    if (dbItem) {
+                        const totalUsed = parseFloat(item.totalUsed) || 0;
+                        const size = dbItem.size;
+                        const avePortionSize = dbItem.ave_portion_size;
+                        const cost = dbItem.Cost;
+                        const estimatedServings = Math.floor(totalUsed * (size / avePortionSize));
+                        const estimatedCost = (totalUsed * cost).toFixed(2);
+                        const itemCat = dbItem.cat;
+                        return `
+                            <tr>
+                                <td>${item.type}</td>
+                                <td>${item.startingAmount}</td>
+                                <td>${item.addedAmount}</td>
+                                <td>${item.endingAmount}</td>
+                                <td>${totalUsed}</td>
+                                <td>${estimatedServings}</td>
+                                <td>${estimatedCost}</td>
+                                <td>${itemCat || 'unknown'}</td>
+                            </tr>
+                        `;
+                    } else {
+                        return `
+                            <tr>
+                                <td>${item.type}</td>
+                                <td>${item.startingAmount}</td>
+                                <td>${item.addedAmount}</td>
+                                <td>${item.endingAmount}</td>
+                                <td>${item.totalUsed}</td>
+                                <td>N/A</td>
+                                <td>N/A</td>
+                                <td>Unknown</td>
+                            </tr>
+                        `;
+                    }
+                }).join('')}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="5"><strong>Totals:</strong></td>
+                    <td id="total-servings"></td>
+                    <td id="total-cost"></td>
+                </tr>
+            </tfoot>
+        </table>
+    `;
+    summaryContainer.innerHTML = tableHTML;
+    summaryContainer.offsetHeight;
+
+    // Call updateSummaryTable after the table is rendered
+    updateSummaryTable(formData.inventory);
+
+    // Add event listener for the submit report button
+    document.getElementById('submit-report-button').addEventListener('click', function() {
+        sendEmailReport(formData, tableHTML);
+    });
 }
-        function sendEmailReport(formData, tableHTML) {
-            fetch('/api/send-report', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ formData, tableHTML }),
-            });
+
+document.getElementById('edit-button').addEventListener('click', function() {
+    window.location.href = 'index.html'; // Change 'index.html' to the name of your first HTML file
+});
+
+// Function to send the report
+function sendEmailReport(formData, tableHTML) {
+    fetch('/api/send-report', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ formData, tableHTML }),
+    });
+}
+
+// Function to update totals in the summary table
+function updateSummaryTable(inventory) {
+    let totalServings = 0;
+    let totalCost = 0;
+
+    // Calculate the total servings and total cost
+    inventory.forEach(item => {
+        const dbItem = alcoholDatabase[item.type];
+        if (dbItem) {
+            const totalUsed = parseFloat(item.totalUsed) || 0;
+            const size = dbItem.size;
+            const avePortionSize = dbItem.ave_portion_size;
+            const cost = dbItem.Cost;
+            const estimatedServings = Math.floor(totalUsed * (size / avePortionSize));
+            const estimatedCost = totalUsed * cost;
+
+            totalServings += estimatedServings;
+            totalCost += estimatedCost;
         }
+    });
+
+    // Update the totals in the table
+    document.getElementById('total-servings').textContent = totalServings;
+    document.getElementById('total-cost').textContent = `$${totalCost.toFixed(2)}`;
+}
+</script>
+    <script>
 // Function to create the pie chart
 function createPieChart(data, servingsData) {
     const canvas = document.getElementById('categoryPieChart');
@@ -504,8 +537,8 @@ function updateSummaryTable(inventory) {
 }
 
 
-    </script>
- <script>
+</script>
+    <script>
 document.getElementById('addCommentButton').addEventListener('click', function() {
     // Create a new div for the comment box and button
     var commentDiv = document.createElement('div');
@@ -536,8 +569,8 @@ function saveComment(comment) {
     localStorage.setItem('comments', JSON.stringify(comments));
 }
     </script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script type="text/javascript">
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
     // Initialize EmailJS with your public key
     (function () {
         emailjs.init({
@@ -583,11 +616,13 @@ function saveComment(comment) {
                             <th>Total Used</th>
                             <th>Estimated Servings</th>
                             <th>Estimated Cost</th>
+                            <th>Item Cat</th>
                         </tr>
                     </thead>
                     <tbody>
                         ${formData.inventory.map(item => {
                             const dbItem = alcoholDatabase[item.type];
+                            const itemCat = dbItem ? dbItem.cat : 'Unknown';
                             if (dbItem) {
                                 const totalUsed = parseFloat(item.totalUsed) || 0;
                                 const size = dbItem.size;
@@ -595,6 +630,7 @@ function saveComment(comment) {
                                 const cost = dbItem.Cost;
                                 const estimatedServings = Math.floor(totalUsed * size / avePortionSize);
                                 const estimatedCost = (totalUsed * cost).toFixed(2);
+                                const itemCat = dbItem.cat;
                                 return `
                                     <tr>
                                         <td>${item.type}</td>
@@ -604,6 +640,7 @@ function saveComment(comment) {
                                         <td>${totalUsed}</td>
                                         <td>${estimatedServings}</td>
                                         <td>$${estimatedCost}</td>
+                                        <td>${itemCat || 'unknown'}</td>
                                     </tr>
                                 `;
                             } else {
@@ -616,6 +653,7 @@ function saveComment(comment) {
                                         <td>${item.totalUsed}</td>
                                         <td>N/A</td>
                                         <td>N/A</td>
+                                        <td>Unknown</td>
                                     </tr>
                                 `;
                             }
