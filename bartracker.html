@@ -478,6 +478,7 @@
                         <th>Added Amount</th>
                         <th>Ending Amount</th>
                         <th>Total Used</th>
+                        <th>Category</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -497,12 +498,14 @@
 
         function addAlcoholRow(type, tbody) {
         const row = document.createElement('tr');
+        const itemCat = alcoholDatabase[type] ? alcoholDatabase[type].cat : 'Unknown'; // Get the category
         row.innerHTML = `
             <td>${type}</td>
             <td><input type="number" step="0.01" placeholder="Starting Amount" data-type="${type}" required></td>
             <td><input type="number" step="0.01" placeholder="Added Amount" data-type="${type}" required></td>
             <td><input type="number" step="0.01" placeholder="Ending Amount" data-type="${type}" required></td>
             <td><input type="number" placeholder="Total Used" readonly data-type="${type}"></td>
+            <td>${itemCat}</td>
             <td><button type="button" class="remove-btn" style="display:none;">Remove</button></td>
         `;
         tbody.appendChild(row);
@@ -589,15 +592,16 @@
                 const addedAmount = row.querySelector('input[placeholder="Added Amount"]').value;
                 const endingAmount = row.querySelector('input[placeholder="Ending Amount"]').value;
                 const totalUsed = row.querySelector('input[placeholder="Total Used"]').value;
+                const itemCat = alcoholDatabase[type] ? alcoholDatabase[type].cat : 'Unknown';
 
-                formData.inventory.push({ type, startingAmount, addedAmount, endingAmount, totalUsed });
+                formData.inventory.push({ type, startingAmount, addedAmount, endingAmount, totalUsed, itemCat });
             });
 
             // Save form data to localStorage
             localStorage.setItem('formData', JSON.stringify(formData));
 
             // Redirect to the summary page
-            window.location.href = 'summary.html';
+            window.location.href = 'summary1.html';
         });
 
         function calculateAndUpdateTotalUsed() {
